@@ -445,8 +445,8 @@ h1 {
                 <th width="11%">단지명</th>
                 <th width="4%">type</th>
                 <th width="5%">면적</th>
-                <th width="18%">매물현황</th>
-                <th width="62%">2026 실거래가</th>
+                <th width="28%">매물현황</th>
+                <th width="52%">2026 실거래가</th>
             </tr>
         </table>
     </div>
@@ -590,7 +590,7 @@ async function fetchSheetData(){
                 
                 // 극대화된 62% 가로폭 매칭
                 historyTd = `
-                <td width="62%" rowspan="${rowInfo.count}" class="history-highlight" style="vertical-align:middle;">
+                <td width="52%" rowspan="${rowInfo.count}" class="history-highlight" style="vertical-align:middle;">
                     <div class="history-text">
                         ${formatHistoryText(rowInfo.history)}
                     </div>
@@ -602,7 +602,7 @@ async function fetchSheetData(){
                 <td width="11%" class="${row.isNewGroup ? 'apt-name-main' : 'apt-name-sub'}">${row.aptName}</td>
                 <td width="4%" class="type-cell">${row.type}</td>
                 <td width="5%" class="size-cell">${row.size}</td>
-                <td width="18%"><span class="price">${row.status}</span></td>
+                <td width="28%"><span class="price">${row.status}</span></td>
                 ${historyTd}
             </tr>`;
         }).join('');
