@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>프리미엄 부동산 DID</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  visibility:hidden;
+  background:#000;
+  overflow:hidden;
+  font-family:'Noto Sans KR',sans-serif;
+}
+
+#screen{
+  width:1920px;
+  height:1080px;
+  position:relative;
+  overflow:hidden;
+  background:#000;
+  color:#fff;
+
+  transform-origin: top left;
+}
+
+/* =========================
+상단
+========================= */
+.top{
+  position:absolute;
+  left:60px;
+  right:60px;
+  top:28px;
+  height:160px;
+  z-index:10;
+}
+
+/* 로고 */
+.logo-wrap{
+  position:absolute;
+  left:0;
+  top:0;
+  display:flex;
+  align-items:center;
+}
+
+.logo-box{
+  width:110px;
+  height:110px;
+  border-radius:30px;
+  background: linear-gradient(145deg, #ff2b2b, #7d0000);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 15px 40px rgba(255,0,0,.35);
+  position:relative;
+  transition: all 0.5s ease;
+}
+
+.logo-box::before{
+  content:"";
+  position:absolute;
+  inset:2px;
+  border-radius:28px;
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+.logo-kr{
+  font-size:40px;
+  font-weight:900;
+  letter-spacing:-4px;
+  color:#fff;
+}
+
+.logo-text{
+  margin-left:24px;
+}
+
+.company{
+  font-size:54px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-2px;
+}
+
+.company-sub{
+  margin-top:10px;
+  font-size:15px;
+  color:#d7d7d7;
+  letter-spacing:4px;
+}
+
+/* 타이틀 */
+.title-wrap{
+  position:absolute;
+  left:50%;
+  top:0;
+  transform:translateX(-50%);
+  width:1200px;
+  text-align:center;
+}
+
+.main-title{
+  font-size:88px;
+  font-weight:900;
+  letter-spacing:-5px;
+  line-height:1.08;
+}
+
+.accent-text {
+  color: #ff3434;
+  transition: color 0.5s ease;
+}
+
+.sub-title{
+  margin-top:18px;
+  font-size:31px;
+  font-weight:500;
+  color:#ececec;
+}
+
+/* 우측 상단 마켓 박스 안보이게 처리 */
+.market-box{
+    display:none !important;
+}
+
+.market-box::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:6px;
+  height:100%;
+  background: linear-gradient(to bottom, #ff4444, #ff9f43);
+}
+
+.market-title{
+  font-size:18px;
+  font-weight:700;
+  color:#ffcfcf;
+  letter-spacing:2px;
+}
+
+.market-price{
+  margin-top:10px;
+  font-size:42px;
+  font-weight:900;
+  color:#fff;
+}
+
+#screen.skin-0 .market-price{ color:#ff8e8e; }
+#screen.skin-1 .market-price{ color:#ffe17a; }
+#screen.skin-2 .market-price{ color:#93c5fd; }
+#screen.skin-3 .market-price{ color:#6ee7b7; }
+#screen.skin-4 .market-price{ color:#e9d5ff; }
+#screen.skin-5 .market-price{ color:#60a5fa; }
+
+.market-sub{
+  margin-top:4px;
+  font-size:16px;
+  color:#cfcfcf;
+}
+
+/* =========================
+중앙 컨텐츠
+========================= */
+.content{
+  position:absolute;
+  left:60px;
+  right:60px;
+  top:215px;
+  bottom:120px;
+  display:flex;
+  gap:32px;
+  z-index:10;
+}
+
+/* 좌측 이미지 패널 */
+.left-panel{
+  width:820px;
+  height:100%;
+  border-radius:42px;
+  overflow:hidden;
+  position:relative;
+  background:#111;
+  box-shadow: 0 20px 70px rgba(0,0,0,.45);
+}
+
+.left-image{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover;
+  display:block;
+  z-index:1;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.left-overlay{
+  position:absolute;
+  inset:0;
+  z-index:2;
+}
+
+/* 스킨별 이미지 오버레이 */
+#screen.skin-0 .left-overlay{ background: linear-gradient(to top, rgba(120,0,0,.45), rgba(0,0,0,.08)); }
+#screen.skin-1 .left-overlay{ background: linear-gradient(to top, rgba(120,90,0,.45), rgba(0,0,0,.08)); }
+#screen.skin-2 .left-overlay{ background: linear-gradient(to top, rgba(0,50,120,.45), rgba(0,0,0,.08)); }
+#screen.skin-3 .left-overlay{ background: linear-gradient(to top, rgba(0,100,60,.45), rgba(0,0,0,.08)); }
+#screen.skin-4 .left-overlay{ background: linear-gradient(to top, rgba(70,0,120,.45), rgba(0,0,0,.08)); }
+#screen.skin-5 .left-overlay{ background: linear-gradient(to top, rgba(30,58,138,.55), rgba(0,0,0,.08)); }
+
+.apt-title{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:90%;
+  text-align:center;
+  font-size:115px;
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing: 5px;
+  color:#ffffff;
+  text-shadow: 0 0 20px rgba(0,0,0,1), 0 0 40px rgba(0,0,0,.9), 0 8px 25px rgba(0,0,0,1);
+  z-index:3;
+}
+
+/* 우측 패널 */
+.right-panel{
+  width:940px;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  height:100%;
+}
+
+.info-box{
+  position:relative;
+  border-radius:38px;
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+  backdrop-filter:blur(18px);
+  border: 1px solid rgba(255,255,255,.08);
+  overflow:hidden;
+}
+
+.info-box::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:8px;
+  height:100%;
+  transition: background 0.5s ease;
+}
+
+/* 매물현황 */
+.price-box{
+  height:270px;
+  padding: 24px 44px 42px 44px;
+}
+
+.box-title{
+  font-size:34px;
+  font-weight:800;
+  transition: color 0.5s ease;
+}
+
+.area{
+  margin-top:24px;
+  font-size:43px;
+  font-weight:700;
+  line-height:1.2;
+}
+
+.price-range{
+  margin-top:10px;
+  font-size:78px;
+  font-weight:900;
+  line-height:1.0;
+  letter-spacing:-4px;
+  transition: all 0.5s ease;
+}
+
+/* 실거래 */
+.deal-box{
+  flex:1;
+  padding: 24px 44px 34px 44px;
+}
+
+.deal-list{
+  margin-top:30px;
+}
+
+.deal-info{
+  font-size:25px;
+  line-height:1.0;
+  color:#ffffff;
+  font-weight: 500;
+}
+
+.muted-text {
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 400;
+}
+
+/* 하단 */
+.bottom{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:115px;
+  background: linear-gradient(90deg, rgba(0,0,0,.96), rgba(18,18,18,.95));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 60px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  z-index:10;
+}
+
+.bottom-company{ font-size:46px; font-weight:900; }
+.phone{ font-size:72px; font-weight:900; color:#ffd44d; letter-spacing:-3px; transition: color 0.5s ease; }
+.notice{ font-size:25px; color:#dfdfdf; }
+
+.deal-row{
+    display:flex; align-items:center; gap:18px; min-height:78px; margin-bottom:14px;
+    padding:10px 18px; border-radius:20px; background:rgba(255,255,255,.04);
+    backdrop-filter:blur(8px); transition:.3s;
+}
+
+.deal-rank{
+    width:58px; height:58px; border-radius:16px; font-size:30px; font-weight:900;
+    flex-shrink:0; display:flex; align-items:center; justify-content:center;
+}
+
+#screen.skin-0 .deal-rank{ background:#ff4444; }
+#screen.skin-1 .deal-rank{ background:#d79f00; }
+#screen.skin-2 .deal-rank{ background:#2563eb; }
+#screen.skin-3 .deal-rank{ background:#059669; }
+#screen.skin-4 .deal-rank{ background:#8b5cf6; }
+#screen.skin-5 .deal-rank{ background:#3b82f6; }
+
+.deal-type{
+    min-width:92px; height:38px; padding:0 16px; border-radius:12px; font-size:17px; font-weight:800;
+    letter-spacing:.5px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+}
+
+#screen.skin-0 .deal-type{ background:#ff4444; }
+#screen.skin-1 .deal-type{ background:#d79f00; }
+#screen.skin-2 .deal-type{ background:#2563eb; }
+#screen.skin-3 .deal-type{ background:#059669; }
+#screen.skin-4 .deal-type{ background:#8b5cf6; }
+#screen.skin-5 .deal-type{ background:#3b82f6; }
+
+.deal-price{ width:260px; font-size:60px; font-weight:900; letter-spacing:-2px; text-shadow: 0 0 18px rgba(255,255,255,.08); }
+.deal-date{ font-size:28px; opacity:.88; }
+.deal-floor{ width:90px; font-size:32px; font-weight:700; }
+.deal-divider{ opacity:.35; }
+
+/* 스킨 스타일 단축 */
+#screen.skin-0 .logo-box { background: linear-gradient(145deg, #ff2b2b, #7d0000); box-shadow: 0 15px 40px rgba(255,0,0,.35); }
+#screen.skin-0 .accent-text { color: #ff3434; }
+#screen.skin-0 .info-box::before { background: linear-gradient(to bottom, #ff6b6b, #ff0000); }
+#screen.skin-0 .box-title { color: #ff8e8e; }
+#screen.skin-0 .price-range { color: #ff5252; }
+#screen.skin-0 .phone { color: #ff5252; }
+
+#screen.skin-1 .logo-box { background: linear-gradient(145deg, #ffe48b, #8a6400); box-shadow: 0 15px 40px rgba(215,159,0,.35); }
+#screen.skin-1 .accent-text { color: #ffe17a; }
+#screen.skin-1 .info-box::before { background: linear-gradient(to bottom, #ffe48b, #d79f00); }
+#screen.skin-1 .box-title { color: #ffe17a; }
+#screen.skin-1 .price-range { color: #ffd44d; }
+#screen.skin-1 .phone { color: #ffd44d; }
+
+#screen.skin-2 .logo-box { background: linear-gradient(145deg, #3b82f6, #1d4ed8); box-shadow: 0 15px 40px rgba(59,130,246,.35); }
+#screen.skin-2 .accent-text { color: #60a5fa; }
+#screen.skin-2 .info-box::before { background: linear-gradient(to bottom, #93c5fd, #2563eb); }
+#screen.skin-2 .box-title { color: #93c5fd; }
+#screen.skin-2 .price-range { color: #60a5fa; }
+#screen.skin-2 .phone { color: #60a5fa; }
+
+#screen.skin-3 .logo-box { background: linear-gradient(145deg, #10b981, #047857); box-shadow: 0 15px 40px rgba(16,185,129,.35); }
+#screen.skin-3 .accent-text { color: #34d399; }
+#screen.skin-3 .info-box::before { background: linear-gradient(to bottom, #6ee7b7, #059669); }
+#screen.skin-3 .box-title { color: #6ee7b7; }
+#screen.skin-3 .price-range { color: #34d399; }
+#screen.skin-3 .phone { color: #34d399; }
+
+#screen.skin-4 .logo-box { background: linear-gradient(145deg, #a855f7, #6b21a8); box-shadow: 0 15px 40px rgba(168,85,247,.35); }
+#screen.skin-4 .accent-text { color: #c084fc; }
+#screen.skin-4 .info-box::before { background: linear-gradient(to bottom, #e9d5ff, #8b5cf6); }
+#screen.skin-4 .box-title { color: #e9d5ff; }
+#screen.skin-4 .price-range { color: #c084fc; }
+#screen.skin-4 .phone { color: #c084fc; }
+
+#screen.skin-5 .logo-box { background: linear-gradient(145deg, #3b82f6, #1e3a8a); box-shadow: 0 15px 40px rgba(59,130,246,.45); }
+#screen.skin-5 .accent-text { color: #60a5fa; }
+#screen.skin-5 .info-box::before { background: linear-gradient(to bottom, #60a5fa, #1e40af); }
+#screen.skin-5 .box-title { color: #93c5fd; }
+#screen.skin-5 .price-range { color: #60a5fa; }
+#screen.skin-5 .phone { color: #60a5fa; }
+
+#screen.skin-0 .deal-row{ background:rgba(255,80,80,.08); }
+#screen.skin-1 .deal-row{ background:rgba(255,212,77,.08); }
+#screen.skin-2 .deal-row{ background:rgba(96,165,250,.08); }
+#screen.skin-3 .deal-row{ background:rgba(52,211,153,.08); }
+#screen.skin-4 .deal-row{ background:rgba(192,132,252,.08); }
+#screen.skin-5 .deal-row{ background:rgba(59,130,246,.10); }
+
+#screen.skin-0 .market-box::before{ background: linear-gradient(to bottom, #ff6b6b, #ff0000); }
+#screen.skin-1 .market-box::before{ background: linear-gradient(to bottom, #ffe48b, #d79f00); }
+#screen.skin-2 .market-box::before{ background: linear-gradient(to bottom, #93c5fd, #2563eb); }
+#screen.skin-3 .market-box::before{ background: linear-gradient(to bottom, #6ee7b7, #059669); }
+#screen.skin-4 .market-box::before{ background: linear-gradient(to bottom, #e9d5ff, #8b5cf6); }
+#screen.skin-5 .market-box::before{ background: linear-gradient(to bottom, #60a5fa, #1e40af); }
+
+#screen.skin-0 .info-box{ background: linear-gradient(180deg, rgba(255,70,70,.18), rgba(255,70,70,.05)); }
+#screen.skin-1 .info-box{ background: linear-gradient(180deg, rgba(255,210,60,.18), rgba(255,210,60,.05)); }
+#screen.skin-2 .info-box{ background: linear-gradient(180deg, rgba(80,150,255,.18), rgba(80,150,255,.05)); }
+#screen.skin-3 .info-box{ background: linear-gradient(180deg, rgba(0,220,140,.18), rgba(0,220,140,.05)); }
+#screen.skin-4 .info-box{ background: linear-gradient(180deg, rgba(180,100,255,.18), rgba(180,100,255,.05)); }
+#screen.skin-5 .info-box{ background: linear-gradient(180deg, rgba(59,130,246,.18), rgba(30,64,175,.05)); }
+
+/* ========================================
+   모바일 전용 레이아웃 (@media) - 간격 미세 조정본
+======================================== */
+@media (max-width: 768px){
+  body{ 
+    overflow: auto; 
+    background: #000; 
+  }
+  #screen{
+    width: 100vw !important; 
+    height: auto !important; 
+    min-height: 100vh !important;
+    transform: none !important; 
+    position: relative !important; 
+    left: 0 !important; 
+    top: 0 !important;
+    display: block !important; 
+    padding-bottom: 20px;
+  }
+  
+  /* 상단 바 영역 */
+  .top{ 
+    position: relative; 
+    left: 0; 
+    right: 0; 
+    top: 0; 
+    height: auto; 
+    padding: 15px 15px 0px 15px; /* 상단 여백을 살짝 주어 안정을 찾음 */
+  }
+  .logo-wrap{ 
+    position: relative; 
+    justify-content: center; 
+    margin-bottom: 5px; 
+  }
+  .logo-box{ 
+    width: 45px; 
+    height: 45px; 
+    border-radius: 12px; 
+  }
+  .logo-kr{ 
+    font-size: 18px; 
+  }
+  .logo-text{ 
+    margin-left: 12px; 
+  }
+  .company{ 
+    font-size: 22px; 
+  }
+  .company-sub{ 
+    font-size: 9px; 
+    letter-spacing: 1px; 
+    margin-top: 2px; 
+  }
+  .title-wrap{ 
+    position: relative; 
+    left: auto; 
+    transform: none; 
+    width: 100%; 
+    margin-top: 5px; 
+  }
+  .main-title{ 
+    font-size: 32px; 
+    letter-spacing: -1px; 
+    line-height: 1.2; 
+  }
+  
+  /* '2026 국토부 실거래가 기준' 서브타이틀 숨김 유지 */
+  .sub-title{ 
+    display: none !important; 
+  }
+  
+  /* [미세 조정] 상단 타이틀과 아래 첫 번째 카드 사이에 완충 간격(margin-top) 부여 */
+  .content{ 
+    position: relative; 
+    left: 0; 
+    right: 0; 
+    top: 0; 
+    bottom: 0; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    padding: 0 15px 0 15px; 
+    margin-top: 12px; /* ★ 너무 붙지 않도록 미세하게 간격을 띄우는 황금 마진 값 설정 */
+  }
+  .left-panel{ 
+    width: 100%; 
+    height: 260px; 
+    border-radius: 20px; 
+  }
+  .apt-title{ 
+    font-size: 38px; 
+    width: 90%; 
+    line-height: 1.1; 
+    letter-spacing: 5px; 
+  }
+  .right-panel{ 
+    width: 100%; 
+    height: auto; 
+    gap: 12px; 
+  }
+  .price-box{ 
+    height: auto; 
+    padding: 16px 20px; 
+  }
+  .box-title{ 
+    font-size: 18px; 
+  }
+  .area{ 
+    font-size: 20px; 
+    margin-top: 8px; 
+  }
+  .price-range{ 
+    font-size: 38px; 
+    margin-top: 4px; 
+    word-break: keep-all; 
+  }
+
+  /* 최근 실거래가 섹션 */
+  .deal-box{ 
+    padding: 16px 20px; 
+  }
+  .deal-list{ 
+    margin-top: 14px; 
+  }
+  .deal-row{ 
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    gap: 12px; 
+    padding: 12px 16px; 
+    min-height: auto; 
+    margin-bottom: 10px; 
+    border-radius: 14px; 
+  }
+  .deal-rank{ 
+    width: 36px; 
+    height: 36px; 
+    font-size: 16px; 
+    border-radius: 10px; 
+    flex-shrink: 0;
+  }
+  
+  /* '매매' 글자 숨김 유지 */
+  .deal-type{ 
+    display: none !important; 
+  }
+  
+  /* 금액 영역 */
+  .deal-price{ 
+    flex: 1; 
+    text-align: left; 
+    font-size: 26px; 
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  
+  /* 일자 영역 */
+  .deal-date{ 
+    font-size: 16px; 
+    color: rgba(255, 255, 255, 0.6); 
+    text-align: right;
+    min-width: 55px;
+  }
+  
+  /* 구분선 숨김 */
+  .deal-divider {
+    display: none !important;
+  }
+
+  /* 층수 영역 */
+  .deal-floor{ 
+    width: auto; 
+    font-size: 17px; 
+    font-weight: 700;
+    text-align: right;
+    min-width: 45px;
+    margin-left: 4px;
+  }
+
+  /* 하단 영역 */
+  .bottom{ 
+    position: relative; 
+    height: auto; 
+    flex-direction: column; 
+    gap: 4px; 
+    padding: 15px; 
+    margin-top: 15px; 
+    text-align: center; 
+    border-radius: 20px; 
+  }
+  .bottom-company{ 
+    font-size: 18px; 
+  }
+  .phone{ 
+    font-size: 28px; 
+  }
+  .notice{ 
+    font-size: 12px; 
+  }
+}
+
+
+</style>
+</head>
+<body>
+
+<div id="screen">
+  <div class="top">
+    <div class="logo-wrap">
+      <div class="logo-box">
+        <div class="logo-kr">동원</div>
+      </div>
+      <div class="logo-text">
+        <div class="company">동원부동산</div>
+        <div class="company-sub">DONGWON REAL ESTATE</div>
+      </div>
+    </div>
+    <div class="title-wrap">
+      <div class="main-title">
+        망우동 아파트 <span class="accent-text">매물 현황</span>
+      </div>
+      <div class="sub-title" id="yearText"></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="left-panel">
+      <img class="left-image" id="aptImage" src="" width="100%" height="100%" onerror="console.error('이미지 로드 실패:', this.src)">
+      <div class="left-overlay"></div>
+      <div class="apt-title" id="aptName"></div>
+    </div>
+    <div class="right-panel">
+      <div class="info-box price-box">
+        <div class="box-title">매물 현황</div>
+        <div class="area" id="areaText"></div>
+        <div class="price-range" id="priceText"></div>
+      </div>
+      <div class="info-box deal-box">
+        <div class="box-title">최근 실거래</div>
+        <div class="deal-list" id="dealList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottom-company">동원부동산</div>
+    <div class="phone">010-2650-3485</div>
+    <div class="notice">정확한 시세 및 매물 상담은 전화로 문의주세요</div>
+  </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(location.search);
+const targetApt = (urlParams.get("apt") || "").trim();
+const forcedSkin = parseInt(urlParams.get("skin") || "0", 10);
+
+const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6rZBSWnFxUOBr9hjs3AWA_NQAEu4o6Zzxp_XUCfsc1n7ahE06_WVVEdiwTsplfE1EuXVSUOpo_EdU/pub?gid=1432662512&single=true&output=csv";
+let propertyData = [];
+
+function isMobile(){ return window.innerWidth < 768; }
+
+window.addEventListener("DOMContentLoaded", () => {
+    const screen = document.getElementById("screen");
+    screen.className = `skin-${forcedSkin}`;
+
+    fitScreen();
+
+    if (targetApt) {
+        let displayName = targetApt;
+        if (displayName.length > 5 && !displayName.includes(" ")) {
+            displayName = displayName.substring(0, 4) + "<br>" + displayName.substring(4);
+        } else {
+            displayName = displayName.replace(" ", "<br>");
+        }
+        document.getElementById("aptName").innerHTML = displayName;
+        
+        const cleanName = targetApt.replace(/\s+/g, "");
+        const imgElement = document.getElementById("aptImage");
+        
+        // [정정 반영] 이미지 에러 대체 폴더 경로도 "./fixed_mob/"으로 완벽하게 연동했습니다.
+        imgElement.onerror = function() {
+            this.onerror = null;
+            const fallbackFolder = isMobile() ? "./fixed_mob/" : "./fixed/";
+            this.src = fallbackFolder + "동원부동산_방문환영.png";
+        };
+        imgElement.src = `./image/${cleanName}.png`;
+        imgElement.style.display = "block";
+
+        fetchData(); 
+    } else {
+        document.getElementById("aptName").innerText = "표시할 데이터가\n없습니다.";
+        document.body.style.visibility = "visible";
+    }
+});
+
+function fetchData() {
+    fetch(csvUrl)
+        .then(response => response.text())
+        .then(csvText => {
+            parseCSV(csvText);
+            if (propertyData.length > 0) {
+                renderTextData();
+            } else {
+                document.body.style.visibility = "visible";
+                if (window.parent) window.parent.postMessage("datasetReady", "*");
+            }
+        })
+        .catch(error => {
+            console.error("데이터 로드 실패:", error);
+            document.body.style.visibility = "visible";
+            if (window.parent) window.parent.postMessage("datasetReady", "*");
+        });
+}
+
+function parseCSV(text) {
+    const lines = text.split(/\r?\n/);
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const row = [];
+        let insideQuote = false;
+        let entry = "";
+        for (let char of lines[i]) {
+            if (char === '"') { insideQuote = !insideQuote; } 
+            else if (char === ',' && !insideQuote) { row.push(entry.trim()); entry = ""; } 
+            else { entry += char; }
+        }
+        row.push(entry.trim());
+
+        if(row.length >= 18) {
+            const aptName = row[1]?.trim() || "";
+            const useImage = row[17]?.trim() || "";
+
+            if (aptName === targetApt && useImage === "1") { 
+                propertyData[0] = {
+                    year: row[2], area: row[3], pyeng: row[4], priceFrom: row[5], priceTo: row[6],
+                    deals: [
+                        { price: row[7], date: row[8], floor: row[9] },
+                        { price: row[10], date: row[11], floor: row[12] },
+                        { price: row[13], date: row[14], floor: row[15] }
+                    ]
+                };
+                break; 
+            }
+        }
+    }
+}
+
+function formatShortDate(dateStr){
+    if(!dateStr || dateStr === "-") return "-";
+    dateStr = dateStr.trim();
+    if(dateStr.includes("/")){
+        const parts = dateStr.split("/");
+        if(parts.length === 2) return `26.${parts[0].padStart(2,"0")}.${parts[1].padStart(2,"0")}`;
+    }
+    const m = dateStr.match(/(\d{2})년\s*(\d{2})월\s*(\d{2})일/);
+    if(m) return `${m[1]}.${m[2]}.${m[3]}`;
+    return dateStr;
+}
+
+function renderTextData() {
+    if (propertyData.length === 0) return;
+    const item = propertyData[0];
+
+    document.getElementById("yearText").innerText = `${item.year}년 국토부 실거래가 기준`;
+    document.getElementById("areaText").innerText = `전용 ${item.area}㎡ (${item.pyeng}평형)`;
+    
+    let priceText = "無";
+    if (item.priceFrom && item.priceTo) {
+        priceText = item.priceFrom === item.priceTo ? item.priceFrom : `${item.priceFrom} ~ ${item.priceTo}`;
+    } else if (item.priceFrom) { priceText = item.priceFrom; } 
+    else if (item.priceTo) { priceText = item.priceTo; }
+    document.getElementById("priceText").innerText = priceText;
+
+    const dealList = document.getElementById("dealList");
+    let dealsHtml = "";
+    let rank = 1;
+
+    item.deals.forEach(deal => {
+        if(!deal.price || deal.price === "-") return;
+        dealsHtml += `
+            <div class="deal-row">
+                <div class="deal-rank">${rank}</div>
+                <div class="deal-type">매매</div>
+                <div class="deal-price">${deal.price}억</div>
+                <div class="deal-date">${formatShortDate(deal.date)}</div>
+                <div class="deal-divider">│</div>
+                <div class="deal-floor">${deal.floor}층</div>
+            </div>`;
+        rank++;
+    });
+
+    if(rank === 1) dealsHtml = `<div class="deal-info">최근 실거래 데이터 없음</div>`;
+    dealList.innerHTML = dealsHtml;
+
+    document.body.style.visibility = "visible";
+    if (window.parent && window.parent !== window) {
+        window.parent.postMessage("datasetReady", "*");
+    }
+}
+
+function fitScreen(){
+    const screen = document.getElementById("screen");
+    if(window.innerWidth <= 768){
+        screen.style.transform = "none"; screen.style.position = "relative";
+        screen.style.left = "0"; screen.style.top = "0"; 
+        screen.style.width = "100%"; screen.style.height = "auto"; 
+        return;
+    }
+    const scaleX = window.innerWidth / 1920;
+    const scaleY = window.innerHeight / 1080;
+    const scale = Math.min(scaleX, scaleY);
+    screen.style.transform = `scale(${scale})`;
+    screen.style.left = ((window.innerWidth - (1920 * scale)) / 2) + "px";
+    screen.style.top = ((window.innerHeight - (1080 * scale)) / 2) + "px";
+    screen.style.position = "absolute";
+    screen.style.width = "1920px"; 
+}
+
+window.addEventListener("load", fitScreen);
+window.addEventListener("resize", fitScreen);
+</script>
+</body>
+</html>

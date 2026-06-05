@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>망우동 실시간 전광판</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Noto Sans KR', sans-serif;
+    visibility: hidden;
+}
+
+#app {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ===================================================
+   [스킨 테마 세팅] 부모 스킨(index.html) 색상 완벽 동기화
+=================================================== */
+
+/* 스킨 0: 인디고 네이비 테마 */
+body.skin-0 { background-color: #0c141f; color: #ffffff; }
+body.skin-0 .top-fixed { background: #070d16; border-bottom: 2px solid rgba(255,255,255,0.08); }
+body.skin-0 .fixed-header { background: #111c2c; border-bottom: 2px solid rgba(255,255,255,0.15); }
+body.skin-0 .data-table td { background: #162438; color: #f1f5f9; border-bottom: 1px solid #0c141f; }
+body.skin-0 .data-table tr.empty-row td { background: rgba(22,36,56,0.3); }
+body.skin-0 .apt-name-sub { color: #8fa0b5; }
+body.skin-0 .price { color: #ffd13b; }
+body.skin-0 .history-group-even { background: #1b2b42 !important; }
+
+/* 스킨 1: 딥 에메랄드 테마 */
+body.skin-1 { background-color: #061814; color: #ffffff; }
+body.skin-1 .top-fixed { background: #030d0b; border-bottom: 2px solid rgba(255,255,255,0.08); }
+body.skin-1 .fixed-header { background: #0b2620; border-bottom: 2px solid rgba(255,255,255,0.15); }
+body.skin-1 .data-table td { background: #0f332b; color: #f1f5f9; border-bottom: 1px solid #061814; }
+body.skin-1 .data-table tr.empty-row td { background: rgba(15,51,43,0.3); }
+body.skin-1 .apt-name-sub { color: #7da199; }
+body.skin-1 .price { color: #ffe26e; }
+body.skin-1 .history-group-even { background: #144036 !important; }
+
+/* 스킨 2: 브라운 테마 */
+body.skin-2 { background-color: #1a110e; color: #ffffff; }
+body.skin-2 .top-fixed { background: #0f0a08; border-bottom: 2px solid rgba(255,255,255,0.08); }
+body.skin-2 .fixed-header { background: #261a15; border-bottom: 2px solid rgba(255,255,255,0.15); }
+body.skin-2 .data-table td { background: #33231d; color: #f1f5f9; border-bottom: 1px solid #1a110e; }
+body.skin-2 .data-table tr.empty-row td { background: rgba(51,35,29,0.3); }
+body.skin-2 .apt-name-sub { color: #a89187; }
+body.skin-2 .price { color: #ffca52; }
+body.skin-2 .history-group-even { background: #3d2b24 !important; }
+
+/* 스킨 3: 블루 퍼플 네이비 테마 */
+body.skin-3 { background-color: #09101e; color: #ffffff; }
+body.skin-3 .top-fixed { background: #050a14; border-bottom: 2px solid rgba(255,255,255,0.08); }
+body.skin-3 .fixed-header { background: #0f1b30; border-bottom: 2px solid rgba(255,255,255,0.15); }
+body.skin-3 .data-table td { background: #14243b; color: #f1f5f9; border-bottom: 1px solid #09101e; }
+body.skin-3 .data-table tr.empty-row td { background: rgba(20,36,59,0.3); }
+body.skin-3 .apt-name-sub { color: #879bb5; }
+body.skin-3 .price { color: #ffcc24; }
+body.skin-3 .history-group-even { background: #1a2d4a !important; }
+
+/* 스킨 4: 리얼 퍼플 테마 */
+body.skin-4 { background-color: #140d1f; color: #ffffff; }
+body.skin-4 .top-fixed { background: #0b0712; border-bottom: 2px solid rgba(255,255,255,0.08); }
+body.skin-4 .fixed-header { background: #1d132e; border-bottom: 2px solid rgba(255,255,255,0.15); }
+body.skin-4 .data-table td { background: #271a3d; color: #f1f5f9; border-bottom: 1px solid #140d1f; }
+body.skin-4 .data-table tr.empty-row td { background: rgba(39,26,61,0.3); }
+body.skin-4 .apt-name-sub { color: #9c8fb3; }
+body.skin-4 .price { color: #ffd64d; }
+body.skin-4 .history-group-even { background: #31214d !important; }
+
+/* 스킨 5: 차콜 블랙 테마 */
+body.skin-5 { background-color: #0d0d0d; color: #ffffff; }
+body.skin-5 .top-fixed { background: #050505; border-bottom: 2px solid rgba(255,255,255,0.08); }
+body.skin-5 .fixed-header { background: #1a1a1a; border-bottom: 2px solid rgba(255,255,255,0.15); }
+body.skin-5 .data-table td { background: #242424; color: #f1f5f9; border-bottom: 1px solid #0d0d0d; }
+body.skin-5 .data-table tr.empty-row td { background: rgba(36,36,36,0.3); }
+body.skin-5 .apt-name-sub { color: #999999; }
+body.skin-5 .price { color: #ffcc33; }
+body.skin-5 .history-group-even { background: #2e2e2e !important; }
+
+
+/* ===================================================
+   [레이아웃 서식] 9줄 고정 및 압축형 광폭 테이블 레이아웃
+=================================================== */
+.top-fixed {
+    flex-shrink: 0;
+    height: 12vh;
+    padding: 1.2vh 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.top-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5vh;
+}
+
+.live-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.35);
+    font-size: 13px;
+    font-weight: 800;
+    color: #4ade80;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 1);
+}
+
+#clock {
+    font-size: 14px;
+    font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.main-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.title-badge {
+    background: #c7ff4d;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+h1 {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    color: #fff;
+}
+
+.contact-box {
+    font-size: 17px;
+    font-weight: 900;
+    color: #c7ff4d;
+    border: 2px solid rgba(199, 255, 77, 0.8);
+    border-radius: 6px;
+    padding: 5px 16px;
+    background: rgba(199, 255, 77, 0.04);
+}
+
+.fixed-header {
+    flex-shrink: 0;
+    height: 5vh;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+}
+
+.fixed-header table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.fixed-header th {
+    font-size: 15px;
+    font-weight: 800;
+    color: #a4b3c6;
+    text-align: center;
+}
+
+.data-scroll {
+    flex: 1;
+    height: 83vh;
+    overflow: hidden;
+    padding: 4px 16px;
+}
+
+.data-table {
+    width: 100%;
+    height: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+}
+
+.data-table tr {
+    height: calc((83vh - 60px) / 9);
+    max-height: 85px; 
+}
+
+.data-table td {
+    padding: 0 4px; /* 여백 최소화하여 넓이 확보 */
+    font-size: 16px;
+    font-weight: 700;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.data-table tr.empty-row td {
+    border: none !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+}
+
+.group-divider td {
+    border-top: 3px solid #c7ff4d !important;
+}
+
+/* 항목 압축 최적화 텍스트 스타일 */
+.apt-name-main {
+    font-size: 15px;
+    font-weight: 900;
+    color: #ffffff !important;
+    text-align: left !important;
+    padding-left: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* 단지명이 너무 길 경우 깨짐 방지 */
+}
+
+.apt-name-sub {
+    font-size: 13px;
+    text-align: left !important;
+    padding-left: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.type-cell {
+    font-size: 15px;
+    font-weight: 800;
+    color: #38bdf8;
+}
+
+.size-cell {
+    font-size: 16px;
+    font-weight: 900;
+    color: #fff;
+}
+
+.price {
+    display: block;
+    width: 100%;
+    font-size: 20px;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ===================================================
+   [실거래가 항목 극대화 스타일]
+=================================================== */
+.history-text {
+    width: 100%;
+    line-height: 1.5;
+    font-size: 14px;
+    color: #e2e8f0;
+    text-align: left;
+    padding: 6px 14px;
+}
+
+.history-highlight {
+    position: relative;
+    border-left: 5px solid #c7ff4d !important;
+    box-shadow: inset 5px 0 10px rgba(199, 255, 77, 0.08);
+}
+
+.deal-price {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 900;
+    color: #ff9d00;
+    background: rgba(255, 157, 0, 0.08);
+    padding: 0px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 157, 0, 0.2);
+}
+
+.sheet-break {
+    display: block;
+    height: 6px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+    margin-bottom: 4px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #fff;
+}
+
+/* ===================================================
+   [★ 모바일 전용 반응형 스타일 추가 ★]
+   가로 768px 이하 모바일 디바이스에만 적용
+=================================================== */
+@media screen and (max-width: 768px) {
+    html, body {
+        overflow: auto; /* 모바일은 자유롭게 스크롤 가능하도록 설정 */
+    }
+    #app {
+        position: relative;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    /* 상단 영역 모바일 커스텀 레이아웃 정의 */
+    .top-fixed {
+        height: auto;
+        padding: 15px 16px;
+        flex-direction: column-reverse; /* 연락처가 위로, 단지명이 아래로 가도록 배치 순서 뒤집기 */
+        gap: 10px;
+    }
+    .top-status, .title-badge {
+        display: none !important; /* 상단 국토부 인증 마크, 시계, 배지 숨김 */
+    }
+    .main-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        width: 100%;
+    }
+    .title-wrap {
+        width: 100%;
+    }
+    h1 {
+        font-size: 20px; /* 단지명 타이틀 크기 조정 */
+        letter-spacing: -0.5px;
+    }
+    .contact-box {
+        width: 100%;
+        text-align: center;
+        font-size: 16px;
+        padding: 6px 0;
+    }
+
+    /* 테이블 모바일 최적화 (3개 컬럼 전용 비율 지정) */
+    .fixed-header {
+        height: 40px;
+    }
+    .data-scroll {
+        height: auto;
+        overflow: visible;
+        padding: 4px 8px;
+    }
+    .data-table tr {
+        height: auto !important; /* 9줄 고정 높이 해제 */
+    }
+    .data-table td, .fixed-header th {
+        padding: 10px 4px !important;
+        font-size: 14px;
+    }
+
+    /* 1번째 컬럼(단지명)과 3번째 컬럼(면적) 숨김 처리 */
+    .fixed-header th:nth-child(1),
+    .data-table tr td:nth-child(1),
+    .fixed-header th:nth-child(3),
+    .data-table tr td:nth-child(3) {
+        display: none !important;
+    }
+
+    /* 남은 3개 컬럼의 모바일 가로폭 비율 최적화 (합산 100%) */
+    .fixed-header th:nth-child(2),
+    .data-table tr td:nth-child(2) {
+        width: 15% !important; /* type 컬럼 */
+    }
+    .fixed-header th:nth-child(4),
+    .data-table tr td:nth-child(4) {
+        width: 30% !important; /* 매물현황 컬럼 */
+    }
+    .fixed-header th:nth-child(5),
+    .data-table tr td:nth-child(5) {
+        width: 55% !important; /* 실거래가 컬럼 */
+    }
+
+    .price {
+        font-size: 15px; /* 가격 폰트 미세 조정 */
+    }
+    .history-text {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    .deal-price {
+        font-size: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+<div id="app">
+    <div class="top-fixed">
+        <div class="top-status">
+            <div class="live-box">
+                <span class="live-dot"></span>
+                국토부 실거래가 반영
+            </div>
+            <div id="clock"></div>
+        </div>
+        <div class="main-title">
+            <div class="title-wrap">
+                <div class="title-badge">망우동 아파트</div>
+                <h1 id="page-title">실시간 매물 · 실거래가 현황</h1>
+            </div>
+            <div class="contact-box">
+                동원부동산 | 010-2650-3485
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-header">
+        <table>
+            <tr>
+                <th width="11%">단지명</th>
+                <th width="4%">type</th>
+                <th width="5%">면적</th>
+                <th width="18%">매물현황</th>
+                <th width="62%">2026 실거래가</th>
+            </tr>
+        </table>
+    </div>
+
+    <div class="data-scroll" id="scroll-target">
+        <table class="data-table">
+            <tbody id="sheet-data-table">
+                <tr>
+                    <td colspan="5" class="loading">
+                        데이터 로딩중...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+const urlParams = new URLSearchParams(location.search);
+const targetApt = (urlParams.get("apt") || "").trim();
+
+const skinParam = parseInt(urlParams.get("skin") || "0", 10);
+document.body.classList.add("skin-" + skinParam);
+
+const mainCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6rZBSWnFxUOBr9hjs3AWA_NQAEu4o6Zzxp_XUCfsc1n7ahE06_WVVEdiwTsplfE1EuXVSUOpo_EdU/pub?gid=469493591&single=true&output=csv";
+const historyCsvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTvUJujQD4nfrzuEoWLNFpkCM0DAEQBcUyyBtq2yJJx6SZl2k1wOWKjaKVplVHGswux7AT7lPVNmDv3/pub?gid=1875400775&single=true&output=csv";
+
+function parseCSV(text){
+    let rows=[]; let quote=false; let row=[''];
+    for(let i=0;i<text.length;i++){
+        let c=text[i]; let next=text[i+1];
+        if(c === '"'){
+            if(quote && next === '"'){ row[row.length-1] += '"'; i++; }else{ quote=!quote; }
+        }else if(c===',' && !quote){ row.push('');
+        }else if((c==='\n'||c==='\r') && !quote){
+            if(row.length>1 || row[0]!==''){ rows.push(row); } row=[''];
+        }else{ row[row.length-1]+=c; }
+    }
+    if(row.length>1 || row[0]!==''){ rows.push(row); }
+    return rows;
+}
+
+function formatHistoryText(text){
+    if(!text) return "";
+    let formatted = text.trim();
+    formatted = formatted.replace(
+        /([0-9.]+억[0-9,]*)/g,
+        '<span class="deal-price">$1</span>'
+    );
+    formatted = formatted
+    .replace(/\n\n/g, '<span class="sheet-break"></span>')
+    .replace(/\n/g,'<br>');
+    return formatted;
+}
+
+async function fetchSheetData(){
+    try{
+        const mainResponse = await fetch(mainCsvUrl + "&t=" + Date.now());
+        const mainText = await mainResponse.text();
+        const mainRows = parseCSV(mainText);
+
+        const historyResponse = await fetch(historyCsvUrl + "&t=" + Date.now());
+        const historyText = await historyResponse.text();
+        const historyRows = parseCSV(historyText);
+
+        const historyMap = {};
+        for(let i=1;i<historyRows.length;i++){
+            const r = historyRows[i];
+            const aptName = r[0]?.trim() || "";
+            const type = r[1]?.toString().trim() || "";
+            const history = r[2]?.trim() || "";
+            const key = aptName + "|" + type;
+            historyMap[key] = history;
+        }
+
+        let processedRows=[];
+        let lastAptName="";
+        const rowspanMap = {};
+
+        for(let i=2;i<mainRows.length;i++){
+            const r=mainRows[i];
+            if(r.length < 6) continue;
+            const status = r[5]?.trim() || "";
+            if(status === ""){ continue; }
+
+            let aptName = r[1]?.trim() || "";
+            let sizeRaw = r[3]?.trim() || "";
+            const sizeInt = parseInt(sizeRaw,10);
+            const historyKey = aptName + "|" + sizeInt;
+            const groupKey = aptName + "|" + sizeInt;
+
+            if(!rowspanMap[historyKey]){
+                rowspanMap[historyKey] = { count:0, history: historyMap[historyKey] || "" };
+            }
+            rowspanMap[historyKey].count++;
+
+            let isNewGroup = (aptName !== "" && aptName !== lastAptName);
+            let displayAptName = (aptName !== "") ? aptName : lastAptName;
+            lastAptName = displayAptName;
+
+            if(targetApt && displayAptName !== targetApt){ continue; }
+
+            processedRows.push({
+                aptName:displayAptName,
+                type:r[2]?.trim() || "-",
+                size:sizeInt || "-",
+                status:status || "-",
+                historyKey,
+                groupKey,
+                isNewGroup
+            });
+        }
+
+        if(processedRows.length === 0 && targetApt){
+            document.getElementById("sheet-data-table").innerHTML = `
+            <tr><td colspan="5" class="loading">${targetApt} 데이터가 없습니다.</td></tr>
+            `;
+            return;
+        }
+
+        const renderedHistoryMap = {};
+        let previousGroupKey = "";
+        let groupToggleCounter = 0;
+
+        const limitedRows = processedRows.slice(0, 9);
+        const actualDataCount = limitedRows.length;
+
+        let html = limitedRows.map(row=>{
+            const isGroupChanged = row.groupKey !== previousGroupKey;
+            if(isGroupChanged){
+                previousGroupKey = row.groupKey;
+                groupToggleCounter++;
+            }
+            
+            const groupRowClass = (groupToggleCounter % 2 === 0) ? 'history-group-even' : 'history-group-odd';
+            let historyTd = "";
+
+            if(!renderedHistoryMap[row.historyKey]){
+                renderedHistoryMap[row.historyKey] = true;
+                const rowInfo = rowspanMap[row.historyKey];
+                
+                // 극대화된 62% 가로폭 매칭
+                historyTd = `
+                <td width="62%" rowspan="${rowInfo.count}" class="history-highlight" style="vertical-align:middle;">
+                    <div class="history-text">
+                        ${formatHistoryText(rowInfo.history)}
+                    </div>
+                </td>`;
+            }
+
+            return `
+            <tr class="${row.isNewGroup ? 'group-divider' : ''} ${groupRowClass}">
+                <td width="11%" class="${row.isNewGroup ? 'apt-name-main' : 'apt-name-sub'}">${row.aptName}</td>
+                <td width="4%" class="type-cell">${row.type}</td>
+                <td width="5%" class="size-cell">${row.size}</td>
+                <td width="18%"><span class="price">${row.status}</span></td>
+                ${historyTd}
+            </tr>`;
+        }).join('');
+
+        if(actualDataCount < 9) {
+            const emptyRowsCount = 9 - actualDataCount;
+            for(let k=0; k<emptyRowsCount; k++) {
+                html += `
+                <tr class="empty-row">
+                    <td width="11%"></td>
+                    <td width="4%"></td>
+                    <td width="5%"></td>
+                    <td width="18%"></td>
+                    <td width="62%"></td>
+                </tr>`;
+            }
+        }
+
+        document.getElementById("sheet-data-table").innerHTML = html;
+
+        if(targetApt){
+            document.getElementById("page-title").innerText = targetApt + " 실시간 매물 · 실거래가";
+        }
+
+        document.body.style.visibility = "visible";
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage("datasetReady", "*");
+        }
+    }catch(e){
+        console.error(e);
+        document.body.style.visibility = "visible";
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage("datasetReady", "*");
+        }
+    }
+}
+
+setInterval(fetchSheetData, 60000);
+
+function updateClock(){
+    document.getElementById("clock").innerText = new Date().toLocaleString('ko-KR');
+}
+setInterval(updateClock, 1000);
+
+fetchSheetData();
+updateClock();
+</script>
+</body>
+</html>
