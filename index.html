@@ -1,43 +1,98 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>동원부동산 전광판</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>동원부동산 전광판</title>
+  <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body { width:100%; height:100%; overflow:hidden; background:#000; }
     .viewer-frame { 
-        position: absolute; left: 0; top: 0; width:100%; height:100%; 
-        border:none; display:block; transition: opacity 0.3s ease;
+      position: absolute; left: 0; top: 0; width:100%; height:100%; 
+      border:none; display:block; transition: opacity 0.3s ease;
     }
+
+    /* 모바일 전용 로딩 화면 */
+    #mobile-loading{
+      display:none;
+    }
+
+    @media (max-width:768px){
+      #mobile-loading{
+        position:fixed;
+        inset:0;
+        background:#000;
+        z-index:99999;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+
+      .mobile-loading-box{
+        text-align:center;
+        color:#fff;
+      }
+
+      .mobile-spinner{
+        width:48px;
+        height:48px;
+        margin:0 auto 15px;
+        border:4px solid rgba(255,255,255,.2);
+        border-top:4px solid #ffd13b;
+        border-radius:50%;
+        animation:spin 1s linear infinite;
+      }
+
+      .mobile-loading-text{
+        font-size:16px;
+        font-weight:700;
+        line-height:1.6;
+      }
+    }
+
+    @keyframes spin{
+      from{transform:rotate(0deg);}
+      to{transform:rotate(360deg);}
+    }
+
     .active { z-index: 2; opacity: 1; }
     .hidden { z-index: 1; opacity: 0; }
-</style>
+  </style>
 </head>
 <body>
-    <iframe id="viewerA" class="viewer-frame active" src=""></iframe>
-    <iframe id="viewerB" class="viewer-frame hidden" src=""></iframe>
 
-<script>
-const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6rZBSWnFxUOBr9hjs3AWA_NQAEu4o6Zzxp_XUCfsc1n7ahE06_WVVEdiwTsplfE1EuXVSUOpo_EdU/pub?gid=1432662512&single=true&output=csv";
-const IMAGE_PAGE = "index_image.html";
-const BOARD_PAGE = "index_dashboard.html";
+  <div id="mobile-loading">
+    <div class="mobile-loading-box">
+      <div class="mobile-spinner"></div>
+      <div class="mobile-loading-text">
+        🏢 매물 정보를 불러오는 중입니다<br>
+        잠시만 기다려주세요
+      </div>
+    </div>
+  </div>
 
-let apartmentList = [];
-let currentIndex = 0;
-let currentFrame = "A"; 
+  <iframe id="viewerA" class="viewer-frame active" src=""></iframe>
+  <iframe id="viewerB" class="viewer-frame hidden" src=""></iframe>
 
-function isMobile(){ return window.innerWidth < 768; }
-function getImgTime(){ return isMobile() ? 5000 : 5000; }
-function getBrdTime(){ return isMobile() ? 4000 : 3000; }
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR6rZBSWnFxUOBr9hjs3AWA_NQAEu4o6Zzxp_XUCfsc1n7ahE06_WVVEdiwTsplfE1EuXVSUOpo_EdU/pub?gid=1432662512&single=true&output=csv";
+    const IMAGE_PAGE = "index_image.html";
+    const BOARD_PAGE = "index_dashboard.html";
 
-// [수정본] 글자 밀림을 완벽하게 방지하는 parseCSV 함수
-function parseCSV(text) {
-    const lines = text.split(/\r?\n/);
-    const set = new Set();
-    
-    for (let i = 1; i < lines.length; i++) {
+    let apartmentList = [];
+    let currentIndex = 0;
+    let currentFrame = "A"; 
+
+    function isMobile(){ return window.innerWidth < 768; }
+    function getImgTime(){ return isMobile() ? 5000 : 5000; }
+    function getBrdTime(){ return isMobile() ? 4000 : 3000; }
+
+    // [수정본] 글자 밀림을 완벽하게 방지하는 parseCSV 함수
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/);
+      const set = new Set();
+      
+      for (let i = 1; i < lines.length; i++) {
         const line = lines[i].trim();
         if (!line) continue; // 빈 행 건너뛰기
         
@@ -47,21 +102,21 @@ function parseCSV(text) {
         let entries = [''];
         
         for (let j = 0; j < line.length; j++) {
-            let char = line[j];
-            let nextChar = line[j + 1];
-            
-            if (char === '"') {
-                if (insideQuote && nextChar === '"') { 
-                    entries[entries.length - 1] += '"'; 
-                    j++; 
-                } else { 
-                    insideQuote = !insideQuote; 
-                }
-            } else if (char === ',' && !insideQuote) {
-                entries.push('');
-            } else {
-                entries[entries.length - 1] += char;
+          let char = line[j];
+          let nextChar = line[j + 1];
+          
+          if (char === '"') {
+            if (insideQuote && nextChar === '"') { 
+              entries[entries.length - 1] += '"'; 
+              j++; 
+            } else { 
+              insideQuote = !insideQuote; 
             }
+          } else if (char === ',' && !insideQuote) {
+            entries.push('');
+          } else {
+            entries[entries.length - 1] += char;
+          }
         }
         row = entries;
         // --------------------------------------------------
@@ -70,35 +125,35 @@ function parseCSV(text) {
         const useImage = row[17] ? row[17].trim().toUpperCase() : ""; // 18번째 컬럼 (R열) 사용여부
         
         if (aptName) {
-            // 사용여부가 1, Y, YES 이거나 기존 로직 조건에 부합할 때 포함
-            if (useImage === "1" || useImage === "Y" || useImage === "YES" || 
-               (useImage !== "N" && useImage !== "NO" && useImage !== "")) {
-                set.add(aptName);
-            }
+          // 사용여부가 1, Y, YES 이거나 기존 로직 조건에 부합할 때 포함
+          if (useImage === "1" || useImage === "Y" || useImage === "YES" || 
+             (useImage !== "N" && useImage !== "NO" && useImage !== "")) {
+            set.add(aptName);
+          }
         }
+      }
+      apartmentList = Array.from(set);
     }
-    apartmentList = Array.from(set);
-}
 
-function changeFrame(url, nextFn, duration) {
-    const hidden = document.getElementById(currentFrame === "A" ? "viewerB" : "viewerA");
-    const active = document.getElementById(currentFrame === "A" ? "viewerA" : "viewerB");
-    
-    hidden.src = url;
-    
-    const safetyTimer = setTimeout(() => {
+    function changeFrame(url, nextFn, duration) {
+      const hidden = document.getElementById(currentFrame === "A" ? "viewerB" : "viewerA");
+      const active = document.getElementById(currentFrame === "A" ? "viewerA" : "viewerB");
+      
+      hidden.src = url;
+      
+      const safetyTimer = setTimeout(() => {
         doSwitch();
-    }, 5000); 
+      }, 5000); 
 
-    function onMessage(e) {
+      function onMessage(e) {
         if (e.data === "datasetReady") {
-            window.removeEventListener("message", onMessage);
-            doSwitch();
+          window.removeEventListener("message", onMessage);
+          doSwitch();
         }
-    }
-    window.addEventListener("message", onMessage);
+      }
+      window.addEventListener("message", onMessage);
 
-    function doSwitch() {
+      function doSwitch() {
         window.removeEventListener("message", onMessage);
         clearTimeout(safetyTimer);
         
@@ -106,67 +161,70 @@ function changeFrame(url, nextFn, duration) {
         active.className = "viewer-frame hidden";
         currentFrame = (currentFrame === "A" ? "B" : "A");
         nextFn();
+      }
     }
-}
 
-async function loadList(){
-    try {
+    async function loadList(){
+      try {
         const res = await fetch(csvUrl + "&t=" + Date.now());
         const text = await res.text();
         parseCSV(text);
         
         if(apartmentList.length > 0) {
-            const url = IMAGE_PAGE + "?apt=" + encodeURIComponent(apartmentList[0]) + "&skin=0";
-            document.getElementById(currentFrame === "A" ? "viewerA" : "viewerB").src = url;
-            
-            setTimeout(() => {
-                document.getElementById("viewerA").className = "viewer-frame active";
-                scheduleNext(0);
-            }, 500);
+          const url = IMAGE_PAGE + "?apt=" + encodeURIComponent(apartmentList[0]) + "&skin=0";
+          document.getElementById(currentFrame === "A" ? "viewerA" : "viewerB").src = url;
+          
+          setTimeout(() => {
+            if(isMobile()){
+              document.getElementById("mobile-loading").style.display = "none";
+            }
+            document.getElementById("viewerA").className = "viewer-frame active";
+            scheduleNext(0);
+          }, 500);
         }
-    } catch(e) { console.error("로드 오류", e); }
-}
+      } catch(e) { console.error("로드 오류", e); }
+    }
 
-function scheduleNext(idx) {
-    currentIndex = idx;
-    const apt = apartmentList[currentIndex];
-    const skin = currentIndex % 6;
+    function scheduleNext(idx) {
+      currentIndex = idx;
+      const apt = apartmentList[currentIndex];
+      const skin = currentIndex % 6;
 
-    const imgUrl = IMAGE_PAGE + "?apt=" + encodeURIComponent(apt) + "&skin=" + skin;
-    
-    changeFrame(imgUrl, () => {
+      const imgUrl = IMAGE_PAGE + "?apt=" + encodeURIComponent(apt) + "&skin=" + skin;
+      
+      changeFrame(imgUrl, () => {
         setTimeout(() => {
-            const boardUrl = BOARD_PAGE + "?apt=" + encodeURIComponent(apt) + "&skin=" + skin;
-            
-            changeFrame(boardUrl, () => {
-                setTimeout(() => {
-                    if(skin === 2 || skin === 5){
-                        const fileName = (skin === 2 ? '동원부동산_방문환영.png' : '동원초중_부동산.png');
-                        
-                        // [정정 반영] 모바일 전용 고정이미지 폴더를 "./fixed_mob/"로 변경했습니다.
-                        const folder = isMobile() ? "./fixed_mob/" : "./fixed/";
-                        const specialPageUrl = "viewer_image.html?img=" + encodeURIComponent(folder + fileName);
-                        
-                        changeFrame(specialPageUrl, () => {
-                            setTimeout(() => { nextIndex(); }, getBrdTime());
-                        }, 0);
-                    } else {
-                        nextIndex();
-                    }
-                }, getBrdTime());
-            }, 0);
+          const boardUrl = BOARD_PAGE + "?apt=" + encodeURIComponent(apt) + "&skin=" + skin;
+          
+          changeFrame(boardUrl, () => {
+            setTimeout(() => {
+              if(skin === 2 || skin === 5){
+                const fileName = (skin === 2 ? '동원부동산_방문환영.png' : '동원초중_부동산.png');
+                
+                // [정정 반영] 모바일 전용 고정이미지 폴더를 "./fixed_mob/"로 변경했습니다.
+                const folder = isMobile() ? "./fixed_mob/" : "./fixed/";
+                const specialPageUrl = "viewer_image.html?img=" + encodeURIComponent(folder + fileName);
+                
+                changeFrame(specialPageUrl, () => {
+                  setTimeout(() => { nextIndex(); }, getBrdTime());
+                }, 0);
+              } else {
+                nextIndex();
+              }
+            }, getBrdTime());
+          }, 0);
         }, getImgTime());
-    }, 0);
-}
+      }, 0);
+    }
 
-function nextIndex() {
-    let next = currentIndex + 1;
-    if (next >= apartmentList.length) next = 0;
-    scheduleNext(next);
-}
+    function nextIndex() {
+      let next = currentIndex + 1;
+      if (next >= apartmentList.length) next = 0;
+      scheduleNext(next);
+    }
 
-loadList();
-setInterval(loadList, 3600000); 
-</script>
+    loadList();
+    setInterval(loadList, 3600000); 
+  </script>
 </body>
 </html>
