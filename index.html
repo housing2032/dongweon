@@ -40,7 +40,44 @@ body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple S
 #welcomeScreen{background:#101820}
 #welcomeScreen[hidden]{display:none}
 #welcomeImage{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
-@media(max-width:760px){body{overflow:auto}#app{height:100vh;min-height:600px;grid-template-columns:1fr;grid-template-rows:38% 1fr;gap:10px;padding:10px}.left{padding:10px}.apt-name{margin-bottom:8px;font-size:24px}.right{padding:13px}.right-head{padding-bottom:9px;margin-bottom:10px;gap:8px}.right-title{font-size:clamp(17px,4.2vw,23px)}.area-label{font-size:clamp(14px,3.4vw,18px);padding:7px 9px}#tradeList{grid-template-columns:1fr;grid-auto-rows:minmax(90px,1fr);gap:8px}.trade-card{padding:10px 13px;gap:5px}.trade-price{font-size:25px}}
+@media(max-width:760px){
+  body{overflow:hidden}
+  #app{width:100%;height:100vh;height:100dvh;min-height:0;grid-template-columns:1fr;grid-template-rows:25% minmax(0,1fr);gap:8px;padding:8px}
+  .left{padding:8px}
+  .apt-name{margin:0 0 6px;font-size:clamp(17px,5vw,23px);letter-spacing:-.8px}
+  .right{padding:9px}
+  .right-head{padding:0 1px 7px;margin-bottom:7px;gap:5px}
+  .right-title{font-size:clamp(14px,3.8vw,19px);letter-spacing:-.6px}
+  .area-label{font-size:clamp(12px,3.2vw,16px);padding:5px 7px;border-radius:7px}
+  /* 모바일에서도 2열 x 4행으로 배치해 최근 거래 8건을 한 화면에 표시 */
+  #tradeList{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:6px;overflow:hidden}
+  .trade-card{padding:5px 7px;gap:3px;border-radius:9px;justify-content:center}
+  .trade-date{font-size:clamp(10px,2.8vw,13px)}
+  .trade-price{font-size:clamp(16px,4.7vw,23px);letter-spacing:-.7px;line-height:1.08}
+  .trade-meta{font-size:clamp(10px,2.8vw,13px);gap:3px 7px}
+  .highest-badge{font-size:clamp(9px,2.4vw,11px);padding:2px 7px}
+  .trade-card.highest{border-width:2px}
+  .trade-card.highest .trade-price{font-size:clamp(17px,5vw,24px)}
+}
+@media(max-width:380px){
+  #app{grid-template-rows:22% minmax(0,1fr);gap:6px;padding:6px}
+  .right{padding:7px}
+  .right-head{margin-bottom:5px;padding-bottom:5px}
+  #tradeList{gap:4px}
+  .trade-card{padding:4px 5px;gap:2px}
+  .trade-price{font-size:clamp(15px,4.5vw,19px)}
+  .trade-card.highest .trade-price{font-size:clamp(16px,4.8vw,20px)}
+}
+@media(max-height:650px) and (max-width:760px){
+  #app{grid-template-rows:19% minmax(0,1fr)}
+  .apt-name{font-size:16px;margin-bottom:4px}
+  .right-head{padding-bottom:4px;margin-bottom:4px}
+  .trade-card{padding:3px 5px;gap:1px}
+  .trade-date,.trade-meta{font-size:10px}
+  .trade-price{font-size:16px}
+  .trade-card.highest .trade-price{font-size:17px}
+  .highest-badge{font-size:9px;padding:1px 5px}
+}
 </style>
 </head>
 <body>
