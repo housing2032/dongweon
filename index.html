@@ -13,20 +13,24 @@ body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple S
 .left{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px}
 .apt-name{width:100%;text-align:center;font-size:clamp(24px,3vw,46px);font-weight:800;letter-spacing:-1.5px;margin:0 0 18px;color:var(--accent);word-break:keep-all}
 .apt-image-wrap{width:100%;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:12px;overflow:hidden}
-#aptImage{display:block;width:100%;height:100%;object-fit:contain}
+#aptImage{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 .image-fallback{color:#24323b;text-align:center;padding:20px;font-size:18px;line-height:1.6;white-space:pre-line}
 .right{display:flex;flex-direction:column;padding:20px;background:linear-gradient(145deg,#1a2a35,#111d26)}
-.right-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:0 2px 15px;margin-bottom:16px}
-.right-title{font-size:clamp(23px,2.3vw,36px);font-weight:800;letter-spacing:-1px}
-.area-label{color:var(--accent);font-size:clamp(15px,1.4vw,21px);white-space:nowrap;font-weight:700}
+.right-head{display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid var(--line);padding:0 2px 15px;margin-bottom:16px;min-width:0}
+.right-title{font-size:clamp(22px,2.15vw,34px);font-weight:800;letter-spacing:-1px;line-height:1.2;min-width:0;word-break:keep-all}
+.area-label{flex:0 0 auto;color:#f2ffd0;background:rgba(217,239,131,.13);border:1px solid rgba(217,239,131,.5);border-radius:10px;padding:9px 14px;font-size:clamp(17px,1.55vw,24px);white-space:nowrap;font-weight:900;letter-spacing:-.3px;text-shadow:0 1px 8px rgba(217,239,131,.18)}
 #tradeList{min-height:0;flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(112px,1fr);gap:12px;overflow:hidden}
-.trade-card{min-width:0;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:var(--panel2);padding:15px 17px;display:flex;flex-direction:column;justify-content:center;gap:9px;box-shadow:0 5px 18px rgba(0,0,0,.12)}
+.trade-card{min-width:0;position:relative;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:var(--panel2);padding:15px 17px;display:flex;flex-direction:column;justify-content:center;gap:9px;box-shadow:0 5px 18px rgba(0,0,0,.12)}
+.trade-card.highest{border:3px solid #ffd45c;background:linear-gradient(135deg,#59451b,#332b20 72%);box-shadow:0 0 0 2px rgba(255,212,92,.18),0 0 24px rgba(255,190,55,.32)}
+.trade-card.highest .trade-price{color:#ffe27a;font-size:clamp(28px,2.65vw,43px);text-shadow:0 0 12px rgba(255,210,80,.25)}
+.highest-badge{align-self:flex-start;background:#ffd45c;color:#33250a;font-size:clamp(12px,1vw,15px);font-weight:900;letter-spacing:.5px;padding:4px 11px;border-radius:999px;line-height:1.2}
+.trade-card.highest .trade-date{color:#ffe8a6}
 .trade-date{color:var(--muted);font-size:clamp(14px,1.2vw,18px);font-weight:600}
 .trade-price{color:var(--accent);font-size:clamp(25px,2.4vw,39px);font-weight:900;letter-spacing:-1px;line-height:1.15;white-space:nowrap}
 .trade-meta{display:flex;flex-wrap:wrap;gap:8px 15px;color:#e2eaf0;font-size:clamp(14px,1.15vw,17px)}
 .empty{grid-column:1/-1;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:clamp(20px,2vw,30px);text-align:center;border:1px dashed var(--line);border-radius:14px;padding:18px}
 #status{position:fixed;left:22px;bottom:8px;color:rgba(255,255,255,.5);font-size:11px;z-index:5}
-@media(max-width:760px){body{overflow:auto}#app{height:100vh;min-height:600px;grid-template-columns:1fr;grid-template-rows:38% 1fr;gap:10px;padding:10px}.left{padding:10px}.apt-name{margin-bottom:8px;font-size:24px}.right{padding:13px}.right-head{padding-bottom:9px;margin-bottom:10px}#tradeList{grid-template-columns:1fr;grid-auto-rows:minmax(90px,1fr);gap:8px}.trade-card{padding:10px 13px;gap:5px}.trade-price{font-size:25px}}
+@media(max-width:760px){body{overflow:auto}#app{height:100vh;min-height:600px;grid-template-columns:1fr;grid-template-rows:38% 1fr;gap:10px;padding:10px}.left{padding:10px}.apt-name{margin-bottom:8px;font-size:24px}.right{padding:13px}.right-head{padding-bottom:9px;margin-bottom:10px;gap:8px}.right-title{font-size:clamp(17px,4.2vw,23px)}.area-label{font-size:clamp(14px,3.4vw,18px);padding:7px 9px}#tradeList{grid-template-columns:1fr;grid-auto-rows:minmax(90px,1fr);gap:8px}.trade-card{padding:10px 13px;gap:5px}.trade-price{font-size:25px}}
 </style>
 </head>
 <body>
@@ -39,7 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple S
 </div>
 </section>
 <section class="right">
-<header class="right-head"><div class="right-title">최근 아파트 실거래</div><div class="area-label" id="areaLabel"></div></header>
+<header class="right-head"><div class="right-title" id="rightTitle">최근 아파트 실거래</div><div class="area-label" id="areaLabel"></div></header>
 <div id="tradeList"><div class="empty">구글시트 데이터를 불러오는 중입니다.</div></div>
 </section>
 </main>
@@ -73,7 +77,8 @@ function imageUrl(filename){
 
 function renderGroup(g){
   document.getElementById("aptName").textContent=g.name;
-  document.getElementById("areaLabel").textContent=g.area+"㎡";
+  document.getElementById("rightTitle").textContent=g.name+" 최근 아파트 실거래";
+  document.getElementById("areaLabel").textContent="전용면적 "+g.area+"㎡";
 
   const img=document.getElementById("aptImage");
   const fb=document.getElementById("imageFallback");
@@ -91,13 +96,17 @@ function renderGroup(g){
     list.innerHTML='<div class="empty">해당 면적의 실거래 내역이 없습니다.</div>';
     return;
   }
-  list.innerHTML=g.trades.slice(0,8).map(t=>
-    `<article class="trade-card">
+  const visibleTrades=g.trades.slice(0,8);
+  const maxPrice=Math.max(...visibleTrades.map(t=>t.priceValue).filter(v=>v!==null));
+  list.innerHTML=visibleTrades.map(t=>{
+    const isHighest=t.priceValue!==null && t.priceValue===maxPrice;
+    return `<article class="trade-card${isHighest?" highest":""}">
+      ${isHighest?'<div class="highest-badge">최고가</div>':""}
       <div class="trade-date">${esc(t.date)}</div>
       <div class="trade-price">${esc(t.price)}</div>
       <div class="trade-meta"><span>${esc(t.floor)}층</span><span>전용 ${esc(t.area)}㎡</span></div>
-    </article>`
-  ).join("");
+    </article>`;
+  }).join("");
 }
 
 function startRotation(){
@@ -186,7 +195,7 @@ function buildGroups(metaRows,outputRows){
     if(!apt||area===null)continue;
     const y=cleanPart(row[oi.year]),m=cleanPart(row[oi.month]),d=cleanPart(row[oi.day]);
     const price=num(row[oi.price]);
-    const t={date:formatDate(y,m,d),dateSort:Number(y||0)*10000+Number(m||0)*100+Number(d||0),price:formatPrice(row[oi.price],row[oi.price]),floor:String(row[oi.floor]||"").trim(),area};
+    const t={date:formatDate(y,m,d),dateSort:Number(y||0)*10000+Number(m||0)*100+Number(d||0),price:formatPrice(row[oi.price],row[oi.price]),priceValue:price,floor:String(row[oi.floor]||"").trim(),area};
     const k=keyOf(apt,area);if(!trades.has(k))trades.set(k,[]);trades.get(k).push(t);
   }
   const groups=[];
