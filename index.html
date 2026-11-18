@@ -323,6 +323,29 @@ function advanceGroupByUserInput(){
   scheduleNextRotation();
 }
 
+/* 모바일에서 위로 스와이프하면 이전 단지로 이동합니다. */
+function goToPreviousGroupBySwipe(){
+  if(!boardGroups.length)return;
+
+  if(showingWelcome){
+    // 고정 환영 화면에서는 위로 스와이프해도 화면을 유지합니다.
+    scheduleNextRotation();
+    return;
+  }
+
+  if(currentIndex===0){
+    // 첫 번째 단지에서 위로 스와이프하면 마지막 고정 환영 이미지를 표시합니다.
+    showWelcome();
+    scheduleNextRotation();
+    return;
+  }
+
+  currentIndex--;
+  renderGroup(boardGroups[currentIndex]);
+  setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환 (이전 단지)`);
+  scheduleNextRotation();
+}
+
 // PC 마우스 클릭 및 모바일 탭으로 다음 단지로 이동합니다.
 // 터치 스와이프 직후 브라우저가 발생시키는 합성 click은 중복 전환되지 않도록 무시합니다.
 let suppressClickUntil=0;
@@ -343,8 +366,8 @@ document.addEventListener("wheel",()=>{
   advanceGroupByUserInput();
 },{passive:true});
 
-// 모바일 손가락 상·하·좌·우 스와이프: 일정 거리 이상 움직였을 때만 다음 단지로 전환합니다.
-// 짧은 터치는 기존 click 동작에 맡깁니다.
+// 모바일 스와이프 방향에 따라 단지를 이동합니다.
+// 왼쪽·위쪽 스와이프: 이전 단지 / 오른쪽·아래쪽 스와이프: 다음 단지
 let touchStartX=0;
 let touchStartY=0;
 let touchStartAt=0;
@@ -363,12 +386,26 @@ document.addEventListener("touchend",(event)=>{
   const deltaY=touch.clientY-touchStartY;
   const elapsed=Date.now()-touchStartAt;
 
-  // 상·하·좌·우 어느 방향이든 45px 이상 이동한 스와이프를 인정합니다.
-  // 대각선 이동도 허용하며, 짧은 터치나 너무 오래 끄는 동작은 제외합니다.
+  const absX=Math.abs(deltaX);
+  const absY=Math.abs(deltaY);
   const distance=Math.hypot(deltaX,deltaY);
+
+  // 45px 이상 이동하고 1.2초 이내에 끝난 스와이프만 인정합니다.
   if(distance>=45 && elapsed<1200){
     suppressClickUntil=Date.now()+700;
-    advanceGroupByUserInput();
+
+    // 이동 방향에 따라 단지를 전환합니다.
+    if(absY>absX*1.2){
+      if(deltaY>0){
+        advanceGroupByUserInput(); // 아래로: 다음 단지
+      }else{
+        goToPreviousGroupBySwipe(); // 위로: 이전 단지 또는 첫 단지의 고정 이미지
+      }
+    }else if(deltaX<0){
+      goToPreviousGroupBySwipe(); // 왼쪽으로: 이전 단지
+    }else{
+      advanceGroupByUserInput(); // 오른쪽으로: 다음 단지
+    }
   }
 },{passive:true});
 
