@@ -482,12 +482,27 @@ function buildGroups(metaRows,outputRows){
   const oi={apt:col(oh,"단지명","출력용"),area:col(oh,"전용면적","출력용"),year:col(oh,"계약년도","출력용"),month:col(oh,"계약월","출력용"),day:col(oh,"계약일","출력용"),price:col(oh,"거래금액(만원)","출력용"),floor:col(oh,"층","출력용")};
   const meta=new Map();
   for(let r=1;r<metaRows.length;r++){
-    const row=metaRows[r],apt=String(row[mi.apt]||"").trim(),visible=String(row[mi.visible]||"").trim();
-    if(!visible||!apt)continue;
-    // '나의_단지명' 단일 컬럼으로만 그룹핑하고, 나머지 컬럼은 그룹 내 최대값을 사용합니다.
-    if(!meta.has(apt))meta.set(apt,{name:apt,area:null,imageFile:"",skin:"",rotateSeconds:null});
-    const g=meta.get(apt);
-    g.area=maxNum(g.area,row[mi.area]);
+    const row=metaRows[r];
+    const apt=String(row[mi.apt]||"").trim();
+    const visible=String(row[mi.visible]||"").trim();
+    const area=intArea(row[mi.area]);
+    if(!visible||!apt||area===null)continue;
+
+    // '나의_단지명'과 '전광판_표시면적(약식)' 조합으로 그룹핑합니다.
+    // 같은 단지라도 면적이 다르면 별도 전광판 화면으로 표시합니다.
+    const groupKey=keyOf(apt,area);
+    if(!meta.has(groupKey)){
+      meta.set(groupKey,{
+        name:apt,
+        area,
+        imageFile:"",
+        skin:"",
+        rotateSeconds:null
+      });
+    }
+    const g=meta.get(groupKey);
+
+    // 나머지 컬럼은 동일 단지·동일 면적 그룹 안에서 최대값을 적용합니다.
     g.imageFile=maxText(g.imageFile,row[mi.image]);
     g.skin=maxText(g.skin,row[mi.skin]);
     g.rotateSeconds=maxNum(g.rotateSeconds,row[mi.rotate]);
@@ -503,15 +518,13 @@ function buildGroups(metaRows,outputRows){
   }
   const groups=[];
   meta.forEach(g=>{
-    const area=intArea(g.area);
-    if(area===null)return;
     groups.push({
       name:g.name,
-      area,
+      area:g.area,
       imageFile:g.imageFile,
       skin:normalizeSkin(g.skin),
       rotateSeconds:g.rotateSeconds!==null&&g.rotateSeconds>0?g.rotateSeconds:DEFAULT_ROTATE_SECONDS,
-      trades:(trades.get(keyOf(g.name,area))||[]).slice().sort((a,b)=>b.dateSort-a.dateSort)
+      trades:(trades.get(keyOf(g.name,g.area))||[]).slice().sort((a,b)=>b.dateSort-a.dateSort)
     });
   });
   return groups;
