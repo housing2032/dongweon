@@ -5,39 +5,24 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>아파트 실거래 전광판</title>
 <style>
-/* 기본 스킨 및 단지별 색상 변수 */
-:root{--bg:#101820;--panel:#182631;--panel2:#203341;--line:rgba(255,255,255,.13);--text:#f4f7f9;--muted:#a9bac5;--accent:#d9ef83;--panel-gradient:linear-gradient(145deg,#1a2a35,#111d26);--image-bg:#17242d;--apt-shadow:rgba(217,239,131,.16);--card-border:rgba(255,255,255,.15);--title-color:#ffe18a;--title-border:#e7bd61;--area-color:#f2ffd0;--area-bg:rgba(217,239,131,.13);--area-border:rgba(217,239,131,.5)}
-/* ① 네이비 골드 */
-body[data-skin="navy"]{--skin-glow:rgba(76,132,205,.30);--skin-edge:#c9a85d;--skin-name-bg:rgba(43,77,119,.42);--bg:#08152a;--panel:#14243a;--panel2:#203550;--line:rgba(180,202,230,.22);--muted:#b2c2d5;--accent:#e5c77b;--panel-gradient:linear-gradient(145deg,#1b304b,#101c2d);--image-bg:#172a40;--apt-shadow:rgba(229,199,123,.2);--card-border:rgba(190,207,230,.2);--title-color:#f5d995;--title-border:#c9a85d;--area-color:#f9e8b5;--area-bg:rgba(201,168,93,.15);--area-border:rgba(201,168,93,.5)}
-/* ② 에메랄드 그린 */
-body[data-skin="emerald"]{--skin-glow:rgba(54,157,112,.30);--skin-edge:#72c99b;--skin-name-bg:rgba(31,105,75,.42);--bg:#071d17;--panel:#15302b;--panel2:#20443b;--line:rgba(174,218,194,.2);--muted:#b4cfc2;--accent:#9bd3b1;--panel-gradient:linear-gradient(145deg,#1b4036,#102720);--image-bg:#17382f;--apt-shadow:rgba(155,211,177,.2);--card-border:rgba(174,218,194,.2);--title-color:#e5d6a0;--title-border:#bba66c;--area-color:#d9f1df;--area-bg:rgba(130,190,153,.14);--area-border:rgba(155,211,177,.48)}
-/* ③ 차콜 실버 */
-body[data-skin="charcoal"]{--skin-glow:rgba(160,177,195,.25);--skin-edge:#d5dce3;--skin-name-bg:rgba(105,119,135,.30);--bg:#20252c;--panel:#252a30;--panel2:#343b43;--line:rgba(220,228,235,.17);--muted:#c0c8d0;--accent:#d5dce3;--panel-gradient:linear-gradient(145deg,#343b43,#20252b);--image-bg:#30363d;--apt-shadow:rgba(213,220,227,.16);--card-border:rgba(220,228,235,.18);--title-color:#e8edf2;--title-border:#aeb9c4;--area-color:#eef2f5;--area-bg:rgba(190,202,213,.13);--area-border:rgba(190,202,213,.45)}
-/* ④ 버건디 골드 */
-body[data-skin="burgundy"]{--skin-glow:rgba(183,65,91,.30);--skin-edge:#d58b78;--skin-name-bg:rgba(126,43,65,.42);--bg:#260e1a;--panel:#351c25;--panel2:#4a2934;--line:rgba(238,194,199,.18);--muted:#d5b9c0;--accent:#e4b2a9;--panel-gradient:linear-gradient(145deg,#512b38,#2b1820);--image-bg:#43232e;--apt-shadow:rgba(228,178,169,.18);--card-border:rgba(238,194,199,.18);--title-color:#f0d09a;--title-border:#c49a62;--area-color:#f6dfc5;--area-bg:rgba(196,154,98,.14);--area-border:rgba(196,154,98,.48)}
-/* ⑤ 딥 틸 블루 */
-body[data-skin="teal"]{--skin-glow:rgba(47,157,174,.30);--skin-edge:#70c5cc;--skin-name-bg:rgba(31,104,119,.42);--bg:#08202a;--panel:#17313b;--panel2:#214451;--line:rgba(174,216,224,.2);--muted:#b4cbd0;--accent:#8ed0d0;--panel-gradient:linear-gradient(145deg,#1e4652,#102832);--image-bg:#193b45;--apt-shadow:rgba(142,208,208,.18);--card-border:rgba(174,216,224,.2);--title-color:#d8eeee;--title-border:#79b7bd;--area-color:#d9f3f2;--area-bg:rgba(121,183,189,.14);--area-border:rgba(121,183,189,.48)}
-/* ⑥ 브론즈 브라운 */
-body[data-skin="bronze"]{--skin-glow:rgba(177,119,61,.30);--skin-edge:#d2a16a;--skin-name-bg:rgba(121,78,39,.42);--bg:#24180e;--panel:#30251b;--panel2:#443629;--line:rgba(225,204,174,.19);--muted:#cdbda8;--accent:#d9b98b;--panel-gradient:linear-gradient(145deg,#493829,#261e17);--image-bg:#3b2d21;--apt-shadow:rgba(217,185,139,.18);--card-border:rgba(225,204,174,.19);--title-color:#f0d4a7;--title-border:#b98d58;--area-color:#f2dfc2;--area-bg:rgba(185,141,88,.14);--area-border:rgba(185,141,88,.48)}
+:root{--bg:#101820;--panel:#182631;--panel2:#203341;--line:rgba(255,255,255,.13);--text:#f4f7f9;--muted:#a9bac5;--accent:#d9ef83}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}
-body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;overflow:hidden;transition:background .65s ease,color .45s ease}
+body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;overflow:hidden}
 #app{width:100vw;height:100vh;min-height:420px;display:grid;grid-template-columns:minmax(300px,42%) 1fr;gap:18px;padding:18px}
 .left,.right{min-width:0;min-height:0;border:1px solid var(--line);border-radius:18px;background:var(--panel);overflow:hidden}
-.left{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;position:relative;background:radial-gradient(ellipse at 50% 0%,var(--skin-glow),transparent 62%),var(--panel);border-color:var(--skin-edge);box-shadow:inset 0 0 0 1px var(--skin-glow)}
-.apt-name{width:100%;text-align:center;font-size:clamp(24px,3vw,46px);font-weight:900;letter-spacing:-1.5px;margin:0 0 18px;color:var(--accent);text-shadow:0 2px 14px var(--apt-shadow);word-break:keep-all;padding:15px 12px;border:1px solid var(--skin-edge);border-left:6px solid var(--skin-edge);border-radius:12px;background:linear-gradient(110deg,var(--skin-name-bg),transparent 85%);box-shadow:0 8px 24px rgba(0,0,0,.18)}
-.apt-image-wrap{width:100%;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:var(--image-bg);border-radius:12px;overflow:hidden}
+.left{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px}
+.apt-name{width:100%;text-align:center;font-size:clamp(24px,3vw,46px);font-weight:800;letter-spacing:-1.5px;margin:0 0 18px;color:var(--accent);word-break:keep-all}
+.apt-image-wrap{width:100%;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#17242d;border-radius:12px;overflow:hidden}
 #aptImage{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 .image-fallback{color:#24323b;text-align:center;padding:20px;font-size:18px;line-height:1.6;white-space:pre-line}
-.right{display:flex;flex-direction:column;padding:20px;background:var(--panel-gradient)}
+.right{display:flex;flex-direction:column;padding:20px;background:linear-gradient(145deg,#1a2a35,#111d26)}
 .right-head{display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid var(--line);padding:0 2px 15px;margin-bottom:16px;min-width:0}
 .right-title{font-size:clamp(22px,2.15vw,34px);font-weight:700;letter-spacing:-1px;line-height:1.2;min-width:0;word-break:keep-all}
-.title-apt{display:inline-block;color:var(--title-color);font-weight:900;text-shadow:0 1px 12px var(--apt-shadow);padding:3px 9px 5px;margin-right:5px;border-left:4px solid var(--title-border);background:linear-gradient(90deg,var(--area-bg),transparent);border-radius:4px}
+.title-apt{display:inline-block;color:#ffe18a;font-weight:900;text-shadow:0 1px 12px rgba(255,205,90,.22);padding:3px 9px 5px;margin-right:5px;border-left:4px solid #e7bd61;background:linear-gradient(90deg,rgba(231,189,97,.17),rgba(231,189,97,.035));border-radius:4px}
 .title-caption{color:#f4f7f9;font-weight:700}
-.area-label{flex:0 0 auto;color:var(--area-color);background:linear-gradient(135deg,var(--area-bg),var(--panel2));border:2px solid var(--skin-edge);border-radius:12px;padding:7px 16px;font-size:clamp(19px,1.8vw,27px);white-space:nowrap;font-weight:900;letter-spacing:-.3px;text-shadow:0 1px 8px var(--apt-shadow);display:flex;align-items:center;gap:9px;box-shadow:0 5px 18px rgba(0,0,0,.2)}
-.area-caption{font-size:.52em;letter-spacing:0;color:var(--muted);font-weight:700}
-.area-label strong{font-size:1.2em;color:var(--area-color)}
+.area-label{flex:0 0 auto;color:#f2ffd0;background:rgba(217,239,131,.13);border:1px solid rgba(217,239,131,.5);border-radius:10px;padding:9px 14px;font-size:clamp(17px,1.55vw,24px);white-space:nowrap;font-weight:900;letter-spacing:-.3px;text-shadow:0 1px 8px rgba(217,239,131,.18)}
 #tradeList{min-height:0;flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:clamp(5px,0.8vh,12px);overflow:hidden}
-.trade-card{min-width:0;min-height:0;position:relative;border:1px solid var(--card-border);border-radius:14px;background:var(--panel2);padding:clamp(5px,1.25vh,15px) clamp(7px,1vw,17px);display:flex;flex-direction:column;justify-content:center;gap:clamp(2px,.7vh,9px);overflow:hidden;box-shadow:0 5px 18px rgba(0,0,0,.12)}
+.trade-card{min-width:0;min-height:0;position:relative;border:1px solid rgba(255,255,255,.13);border-radius:14px;background:var(--panel2);padding:clamp(5px,1.25vh,15px) clamp(7px,1vw,17px);display:flex;flex-direction:column;justify-content:center;gap:clamp(2px,.7vh,9px);overflow:hidden;box-shadow:0 5px 18px rgba(0,0,0,.12)}
 .trade-card.highest{border:3px solid #ffd45c;background:linear-gradient(135deg,#59451b,#332b20 72%);box-shadow:0 0 0 2px rgba(255,212,92,.18),0 0 24px rgba(255,190,55,.32)}
 .trade-card.highest .trade-price{color:#ffe27a;font-size:clamp(20px,3.4vh,43px);text-shadow:0 0 12px rgba(255,210,80,.25)}
 .highest-badge{align-self:flex-start;background:#ffd45c;color:#33250a;font-size:clamp(10px,1.35vh,15px);font-weight:900;letter-spacing:.5px;padding:clamp(2px,.45vh,4px) clamp(6px,.8vw,11px);border-radius:999px;line-height:1.15}
@@ -106,117 +91,6 @@ body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple S
   .trade-card.highest .trade-price{font-size:17px}
   .highest-badge{font-size:9px;padding:1px 5px}
 }
-
-/* 구글시트 HEX 스킨 전환 효과 */
-.left,.right,.trade-card,.apt-name,.area-label,.apt-image-wrap{
-  transition:background .6s ease,border-color .6s ease,box-shadow .6s ease,color .45s ease;
-}
-.apt-name{box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 0 24px var(--skin-glow)}
-.area-label{box-shadow:0 0 0 3px var(--area-bg),0 8px 22px rgba(0,0,0,.25)}
-/* 단지·면적 전환 시 새 화면임을 분명하게 보여주는 모션 */
-.apt-name.group-change{animation:aptNameIn .75s cubic-bezier(.2,.8,.2,1) both}
-.area-label.group-change{animation:areaIn .65s cubic-bezier(.2,.8,.2,1) both}
-.title-apt.group-change{animation:titleIn .65s cubic-bezier(.2,.8,.2,1) both}
-.apt-image-wrap{border:1px solid var(--skin-edge);box-shadow:0 0 0 3px var(--skin-glow),0 12px 30px rgba(0,0,0,.18);transition:border-color .45s,box-shadow .45s}
-.right{border-color:var(--skin-edge);transition:background .45s,border-color .45s}
-@keyframes aptNameIn{0%{opacity:.25;transform:translateY(18px) scale(.96);filter:blur(4px)}65%{opacity:1;transform:translateY(-3px) scale(1.015);filter:blur(0)}100%{transform:translateY(0) scale(1)}}
-@keyframes areaIn{0%{opacity:.2;transform:translateX(18px) scale(.88)}70%{opacity:1;transform:translateX(-3px) scale(1.05)}100%{transform:translateX(0) scale(1)}}
-@keyframes titleIn{0%{opacity:.2;transform:translateX(-15px)}100%{opacity:1;transform:translateX(0)}}
-@media(max-width:760px){
-  .apt-name{padding:7px 8px;border-left-width:4px;border-radius:8px}
-  .area-label{gap:5px;padding:4px 8px;border-radius:8px;font-size:clamp(14px,3.6vw,18px)}
-}
-@media(prefers-reduced-motion:reduce){
-  .apt-name.group-change,.area-label.group-change,.title-apt.group-change{animation:none}
-}
-
-
-
-/* ===== 전광판 단지명 타이틀 가독성 강화 ===== */
-.apt-name{
-  position:relative;
-  isolation:isolate;
-  width:100%;
-  min-height:clamp(76px,10vh,116px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:30px 18px 20px !important;
-  margin:0 0 18px !important;
-  box-sizing:border-box;
-  color:#FFFFFF !important;
-  font-size:clamp(28px,3.35vw,52px) !important;
-  line-height:1.2;
-  font-weight:950 !important;
-  letter-spacing:-1.8px !important;
-  word-break:keep-all;
-  overflow-wrap:anywhere;
-  text-align:center;
-  text-shadow:0 2px 2px rgba(0,0,0,.72),0 5px 18px rgba(0,0,0,.55) !important;
-  background:
-    linear-gradient(110deg,rgba(255,255,255,.075),transparent 38%),
-    linear-gradient(145deg,rgba(8,12,18,.97),rgba(15,22,30,.94)) !important;
-  border:2px solid var(--skin-edge) !important;
-  border-left:9px solid var(--accent) !important;
-  border-bottom:4px solid var(--accent) !important;
-  border-radius:13px !important;
-  box-shadow:
-    0 10px 26px rgba(0,0,0,.42),
-    inset 0 1px 0 rgba(255,255,255,.12),
-    inset 0 -16px 28px rgba(0,0,0,.22),
-    0 0 18px var(--skin-glow) !important;
-  transition:background .55s ease,border-color .55s ease,box-shadow .55s ease;
-}
-.apt-name::before{
-  content:"APARTMENT";
-  position:absolute;
-  top:9px;
-  left:17px;
-  color:var(--accent);
-  font-size:10px;
-  line-height:1;
-  font-weight:800;
-  letter-spacing:3px;
-  text-shadow:0 0 10px var(--skin-glow);
-  opacity:1;
-}
-.apt-name::after{
-  content:"";
-  position:absolute;
-  right:15px;
-  top:12px;
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 10px var(--accent),0 0 18px var(--skin-glow);
-}
-.apt-name.group-change{
-  animation:billboardTitleIn .72s cubic-bezier(.2,.8,.2,1) both !important;
-}
-@keyframes billboardTitleIn{
-  0%{opacity:.35;transform:translateY(9px) scale(.985);filter:brightness(.72)}
-  65%{opacity:1;transform:translateY(-2px) scale(1.008);filter:brightness(1.18)}
-  100%{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}
-}
-@media(max-width:700px){
-  .apt-name{
-    min-height:58px;
-    padding:23px 9px 12px !important;
-    margin-bottom:7px !important;
-    font-size:clamp(18px,5vw,27px) !important;
-    letter-spacing:-.9px !important;
-    border-left-width:6px !important;
-    border-bottom-width:3px !important;
-    border-radius:9px !important;
-  }
-  .apt-name::before{top:7px;left:10px;font-size:8px;letter-spacing:2px}
-  .apt-name::after{top:8px;right:9px;width:5px;height:5px}
-}
-@media(prefers-reduced-motion:reduce){
-  .apt-name.group-change{animation:none !important}
-}
-
 </style>
 </head>
 <body>
@@ -255,7 +129,7 @@ const META_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQgyqshQIN
  * 예: /board/index.html, /board/image/중랑숲금호어울림.jpg
  */
 const IMAGE_BASE_PATH = "./image/";
-const DEFAULT_ROTATE_SECONDS = 5; // 전광판_주기 값이 비어 있거나 잘못된 경우 기본 5초
+const ROTATE_MS = 5000;
 
 let boardGroups = [];
 let currentIndex = 0;
@@ -311,19 +185,9 @@ function preloadUpcomingImages(){
 }
 
 function renderGroup(g){
-  // 단지명meta의 전광판_스킨 HEX 값을 읽어 화면 전체 팔레트를 생성합니다.
-  applySkin(g.skin);
   document.getElementById("aptName").textContent=g.name;
-  document.getElementById("rightTitle").innerHTML=`<span class="title-apt group-change">${esc(g.name)}</span><span class="title-caption">최근 아파트 실거래</span>`;
-  const areaLabel=document.getElementById("areaLabel");
-   areaLabel.innerHTML=`<span class="area-caption">전용면적</span><strong>${esc(g.area)}㎡</strong>`;
-   // 단지명·면적에 각각 진입 모션을 적용해 화면 전환을 인지하기 쉽게 합니다.
-   ["aptName","areaLabel"].forEach(id=>{
-     const el=document.getElementById(id);
-     el.classList.remove("group-change");
-     void el.offsetWidth;
-     el.classList.add("group-change");
-   });
+  document.getElementById("rightTitle").innerHTML=`<span class="title-apt">${esc(g.name)}</span><span class="title-caption">최근 아파트 실거래</span>`;
+  document.getElementById("areaLabel").textContent="전용면적 "+g.area+"㎡";
 
   const img=document.getElementById("aptImage");
   const fb=document.getElementById("imageFallback");
@@ -371,43 +235,9 @@ function renderGroup(g){
   }).join("");
 }
 
-function getGroupRotateMs(group){
-  const seconds=Number(group?.rotateSeconds);
-  return Number.isFinite(seconds)&&seconds>0?seconds*1000:DEFAULT_ROTATE_SECONDS*1000;
-}
-
-function scheduleNextRotation(){
-  if(rotateTimer)clearTimeout(rotateTimer);
-
-  // 환영 화면은 기존과 동일하게 5초간 표시합니다.
-  const delay=showingWelcome?DEFAULT_ROTATE_SECONDS*1000:getGroupRotateMs(boardGroups[currentIndex]);
-
-  rotateTimer=setTimeout(()=>{
-    if(showingWelcome){
-      currentIndex=0;
-      hideWelcome();
-      renderGroup(boardGroups[currentIndex]);
-      setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환`);
-      scheduleNextRotation();
-      return;
-    }
-
-    if(currentIndex===boardGroups.length-1){
-      showWelcome();
-      scheduleNextRotation();
-      return;
-    }
-
-    currentIndex++;
-    renderGroup(boardGroups[currentIndex]);
-    setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환`);
-    scheduleNextRotation();
-  },delay);
-}
-
 function startRotation(){
   hideLoading();
-  if(rotateTimer)clearTimeout(rotateTimer);
+  if(rotateTimer)clearInterval(rotateTimer);
   if(!boardGroups.length){
     document.getElementById("aptName").textContent="표시할 단지가 없습니다.";
     document.getElementById("tradeList").innerHTML='<div class="empty">단지명meta 탭의 전광판_표시여부와 나의_단지명을 확인해 주세요.</div>';
@@ -416,121 +246,24 @@ function startRotation(){
   }
   hideWelcome();
   renderGroup(boardGroups[currentIndex]);
-  setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환`);
-  scheduleNextRotation();
-}
-
-// 화면을 터치하거나 마우스로 클릭하면 다음 단지로 즉시 이동합니다.
-// 터치도 브라우저의 click 이벤트로 처리하므로 touch 이벤트를 별도로 등록하지 않습니다.
-function advanceGroupByUserInput(){
-  if(!boardGroups.length)return;
-
-  // 환영 화면에서 입력하면 첫 번째 단지로 돌아갑니다.
-  if(showingWelcome){
-    currentIndex=0;
-    hideWelcome();
-  }else if(currentIndex===boardGroups.length-1){
-    // 마지막 단지에서 입력하면 기존 순환 흐름과 같이 환영 화면을 표시합니다.
-    showWelcome();
-    scheduleNextRotation();
-    return;
-  }else{
-    currentIndex++;
-  }
-
-  renderGroup(boardGroups[currentIndex]);
-  setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환 (터치/클릭 가능)`);
-  // 수동으로 넘긴 시점부터 해당 단지의 표시 주기를 다시 계산합니다.
-  scheduleNextRotation();
-}
-
-/* 모바일에서 위로 스와이프하면 이전 단지로 이동합니다. */
-function goToPreviousGroupBySwipe(){
-  if(!boardGroups.length)return;
-
-  if(showingWelcome){
-    // 고정 환영 화면에서 이전 동작을 하면 마지막 단지로 이동합니다.
-    currentIndex=boardGroups.length-1;
-    hideWelcome();
-    renderGroup(boardGroups[currentIndex]);
-    setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환 (이전 단지)`);
-    scheduleNextRotation();
-    return;
-  }
-
-  if(currentIndex===0){
-    // 첫 번째 단지에서 위로 스와이프하면 마지막 고정 환영 이미지를 표시합니다.
-    showWelcome();
-    scheduleNextRotation();
-    return;
-  }
-
-  currentIndex--;
-  renderGroup(boardGroups[currentIndex]);
-  setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환 (이전 단지)`);
-  scheduleNextRotation();
-}
-
-// PC 마우스 클릭 및 모바일 탭으로 다음 단지로 이동합니다.
-// 터치 스와이프 직후 브라우저가 발생시키는 합성 click은 중복 전환되지 않도록 무시합니다.
-let suppressClickUntil=0;
-document.addEventListener("click",(event)=>{
-  if(Date.now()<suppressClickUntil)return;
-  // PC 더블클릭의 두 번째 click(detail=2)은 무시하여 한 번만 전환합니다.
-  if(event.detail>1)return;
-  advanceGroupByUserInput();
-});
-
-// PC 마우스 휠: 위·아래 어느 방향이든 한 번의 스크롤 동작당 한 단지만 이동합니다.
-// 휠 이벤트가 연속 발생하는 것을 방지하기 위해 짧은 쿨다운을 둡니다.
-let lastWheelActionAt=0;
-document.addEventListener("wheel",()=>{
-  const now=Date.now();
-  if(now-lastWheelActionAt<650)return;
-  lastWheelActionAt=now;
-  advanceGroupByUserInput();
-},{passive:true});
-
-// 모바일 스와이프 방향에 따라 단지를 이동합니다.
-// 위쪽·왼쪽·오른쪽 스와이프: 다음 단지 / 아래쪽 스와이프: 이전 단지
-let touchStartX=0;
-let touchStartY=0;
-let touchStartAt=0;
-document.addEventListener("touchstart",(event)=>{
-  if(!event.touches||event.touches.length!==1)return;
-  touchStartX=event.touches[0].clientX;
-  touchStartY=event.touches[0].clientY;
-  touchStartAt=Date.now();
-},{passive:true});
-
-document.addEventListener("touchend",(event)=>{
-  if(!event.changedTouches||event.changedTouches.length!==1)return;
-
-  const touch=event.changedTouches[0];
-  const deltaX=touch.clientX-touchStartX;
-  const deltaY=touch.clientY-touchStartY;
-  const elapsed=Date.now()-touchStartAt;
-
-  const absX=Math.abs(deltaX);
-  const absY=Math.abs(deltaY);
-  const distance=Math.hypot(deltaX,deltaY);
-
-  // 45px 이상 이동하고 1.2초 이내에 끝난 스와이프만 인정합니다.
-  if(distance>=45 && elapsed<1200){
-    suppressClickUntil=Date.now()+700;
-
-    // 요청한 방향별 동작: 위·왼쪽·오른쪽은 다음 단지, 아래는 이전 단지
-    if(absY>absX*1.2){
-      if(deltaY<0){
-        advanceGroupByUserInput(); // 위로: 다음 단지
-      }else{
-        goToPreviousGroupBySwipe(); // 아래로: 이전 단지
-      }
-    }else{
-      advanceGroupByUserInput(); // 왼쪽·오른쪽: 다음 단지
+  setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · 5초 간격 순환`);
+  rotateTimer=setInterval(()=>{
+    if(showingWelcome){
+      currentIndex=0;
+      hideWelcome();
+      renderGroup(boardGroups[currentIndex]);
+      setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · 5초 간격 순환`);
+      return;
     }
-  }
-},{passive:true});
+    if(currentIndex===boardGroups.length-1){
+      showWelcome();
+      return;
+    }
+    currentIndex++;
+    renderGroup(boardGroups[currentIndex]);
+    setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · 5초 간격 순환`);
+  },ROTATE_MS);
+}
 
 function showLoadError(message){
   hideLoading();
@@ -571,54 +304,6 @@ function intArea(v){const n=num(v);return n===null?null:Math.trunc(n)}
 function keyOf(apt,area){return String(apt).trim()+"||"+String(Math.trunc(Number(area)))}
 function maxNum(a,b){const n=num(b);return n===null?a:(a===null||n>a?n:a)}
 function maxText(a,b){const v=String(b??"").trim();return !v?a:( !a||v.localeCompare(String(a),"ko")>0?v:a)}
-/* 단지명meta의 전광판_스킨에서 HEX를 직접 읽고 색상 조합을 자동 생성 */
-function normalizeSkin(value){
-  const raw=String(value||"").trim();
-  const m=raw.match(/#([0-9a-fA-F]{6})/);
-  return {name:raw.replace(/\s*\(#[0-9a-fA-F]{6}\)\s*/,"").trim()||"기본 스킨",hex:m?"#"+m[1].toUpperCase():null};
-}
-function hexToRgb(hex){
-  const n=parseInt(String(hex).replace("#",""),16);
-  return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
-}
-function rgbToHsl(c){
-  let r=c.r/255,g=c.g/255,b=c.b/255;
-  const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
-  let h=0,s=0,l=(max+min)/2;
-  if(d){s=d/(1-Math.abs(2*l-1));switch(max){case r:h=((g-b)/d)%6;break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h*=60;if(h<0)h+=360;}
-  return {h,s,l};
-}
-function hslToHex(h,s,l){
-  const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;
-  let r=0,g=0,b=0;
-  if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}
-  return "#"+[r,g,b].map(v=>Math.round((v+m)*255).toString(16).padStart(2,"0")).join("");
-}
-function applySkin(skin){
-  const hex=skin&&skin.hex?skin.hex:"#C9A85D";
-  const hsl=rgbToHsl(hexToRgb(hex)),h=hsl.h,rgb=hexToRgb(hex);
-  const edge=hslToHex(h,Math.max(.3,hsl.s*.75),Math.min(.8,Math.max(.48,hsl.l)));
-  const bg=hslToHex(h,Math.min(.5,Math.max(.2,hsl.s*.65)),.075);
-  const panel=hslToHex(h,Math.min(.45,Math.max(.16,hsl.s*.5)),.13);
-  const panel2=hslToHex(h,Math.min(.48,Math.max(.18,hsl.s*.58)),.20);
-  const imageBg=hslToHex(h,Math.min(.42,Math.max(.15,hsl.s*.5)),.16);
-  const soft=hslToHex(h,Math.min(.5,Math.max(.2,hsl.s*.58)),.28);
-  const v={
-    "--bg":bg,"--panel":panel,"--panel2":panel2,"--line":"rgba(220,230,240,.19)",
-    "--text":"#F5F7FA","--muted":"#B9C4CE","--accent":hex,
-    "--panel-gradient":`linear-gradient(145deg,${soft},${panel})`,"--image-bg":imageBg,
-    "--apt-shadow":`rgba(${rgb.r},${rgb.g},${rgb.b},.25)`,
-    "--card-border":`rgba(${rgb.r},${rgb.g},${rgb.b},.34)`,
-    "--title-color":hslToHex(h,Math.min(.58,hsl.s+.08),.84),"--title-border":edge,
-    "--area-color":"#FFFFFF","--area-bg":`rgba(${rgb.r},${rgb.g},${rgb.b},.18)`,
-    "--area-border":`rgba(${rgb.r},${rgb.g},${rgb.b},.7)`,
-    "--skin-glow":`rgba(${rgb.r},${rgb.g},${rgb.b},.34)`,"--skin-edge":edge,
-    "--skin-name-bg":`rgba(${rgb.r},${rgb.g},${rgb.b},.24)`
-  };
-  Object.entries(v).forEach(([k,val])=>document.body.style.setProperty(k,val));
-  document.body.dataset.skin="sheet";
-  document.body.dataset.skinName=skin&&skin.name?skin.name:"기본 스킨";
-}
 function cleanPart(v){const n=num(v);return n===null?"":String(Math.trunc(n))}
 function formatDate(y,m,d){return y&&m&&d?y.padStart(4,"0")+"."+m.padStart(2,"0")+"."+d.padStart(2,"0"):""}
 function formatPrice(v,raw){
@@ -635,35 +320,14 @@ async function fetchCSV(url,label){
 function buildGroups(metaRows,outputRows){
   if(metaRows.length<2||outputRows.length<2)return [];
   const mh=headerMap(metaRows[0]),oh=headerMap(outputRows[0]);
-  const mi={visible:col(mh,"전광판_표시여부","단지명meta"),apt:col(mh,"나의_단지명","단지명meta"),area:col(mh,"전광판_표시면적(약식)","단지명meta"),image:col(mh,"전광판_이미지파일명","단지명meta"),skin:col(mh,"전광판_스킨","단지명meta"),rotate:col(mh,"전광판_주기","단지명meta")};
+  const mi={visible:col(mh,"전광판_표시여부","단지명meta"),apt:col(mh,"나의_단지명","단지명meta"),area:col(mh,"전광판_표시면적(약식)","단지명meta"),image:col(mh,"전광판_이미지파일명","단지명meta")};
   const oi={apt:col(oh,"단지명","출력용"),area:col(oh,"전용면적","출력용"),year:col(oh,"계약년도","출력용"),month:col(oh,"계약월","출력용"),day:col(oh,"계약일","출력용"),price:col(oh,"거래금액(만원)","출력용"),floor:col(oh,"층","출력용")};
   const meta=new Map();
   for(let r=1;r<metaRows.length;r++){
-    const row=metaRows[r];
-    const apt=String(row[mi.apt]||"").trim();
-    const visible=String(row[mi.visible]||"").trim();
-    const area=intArea(row[mi.area]);
-    if(!visible||!apt||area===null)continue;
-
-    // '나의_단지명'과 '전광판_표시면적(약식)' 조합으로 그룹핑합니다.
-    // 같은 단지라도 면적이 다르면 별도 전광판 화면으로 표시합니다.
-    const groupKey=keyOf(apt,area);
-    if(!meta.has(groupKey)){
-      meta.set(groupKey,{
-        name:apt,
-        area,
-        imageFile:"",
-        skin:"",
-        rotateSeconds:null
-      });
-    }
-    const g=meta.get(groupKey);
-
-    // 나머지 컬럼은 동일 단지·동일 면적 그룹 안에서 최대값을 적용합니다.
-    g.imageFile=maxText(g.imageFile,row[mi.image]);
-    // 중복 행에서는 첫 번째로 입력된 유효 스킨값을 유지합니다.
-    if(!String(g.skin||"").trim() && String(row[mi.skin]||"").trim()) g.skin=String(row[mi.skin]).trim();
-    g.rotateSeconds=maxNum(g.rotateSeconds,row[mi.rotate]);
+    const row=metaRows[r],apt=String(row[mi.apt]||"").trim(),visible=String(row[mi.visible]||"").trim();
+    if(!visible||!apt)continue;
+    if(!meta.has(apt))meta.set(apt,{name:apt,area:null,imageFile:""});
+    const g=meta.get(apt);g.area=maxNum(g.area,row[mi.area]);g.imageFile=maxText(g.imageFile,row[mi.image]);
   }
   const trades=new Map();
   for(let r=1;r<outputRows.length;r++){
@@ -675,16 +339,7 @@ function buildGroups(metaRows,outputRows){
     const k=keyOf(apt,area);if(!trades.has(k))trades.set(k,[]);trades.get(k).push(t);
   }
   const groups=[];
-  meta.forEach(g=>{
-    groups.push({
-      name:g.name,
-      area:g.area,
-      imageFile:g.imageFile,
-      skin:normalizeSkin(g.skin),
-      rotateSeconds:g.rotateSeconds!==null&&g.rotateSeconds>0?g.rotateSeconds:DEFAULT_ROTATE_SECONDS,
-      trades:(trades.get(keyOf(g.name,g.area))||[]).slice().sort((a,b)=>b.dateSort-a.dateSort)
-    });
-  });
+  meta.forEach(g=>{const area=intArea(g.area);if(area===null)return;groups.push({name:g.name,area,imageFile:g.imageFile,trades:(trades.get(keyOf(g.name,area))||[]).slice().sort((a,b)=>b.dateSort-a.dateSort)});});
   return groups;
 }
 async function loadBoard(){
