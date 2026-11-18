@@ -20,7 +20,7 @@ body[data-skin="teal"]{--skin-glow:rgba(47,157,174,.30);--skin-edge:#70c5cc;--sk
 /* ⑥ 브론즈 브라운 */
 body[data-skin="bronze"]{--skin-glow:rgba(177,119,61,.30);--skin-edge:#d2a16a;--skin-name-bg:rgba(121,78,39,.42);--bg:#24180e;--panel:#30251b;--panel2:#443629;--line:rgba(225,204,174,.19);--muted:#cdbda8;--accent:#d9b98b;--panel-gradient:linear-gradient(145deg,#493829,#261e17);--image-bg:#3b2d21;--apt-shadow:rgba(217,185,139,.18);--card-border:rgba(225,204,174,.19);--title-color:#f0d4a7;--title-border:#b98d58;--area-color:#f2dfc2;--area-bg:rgba(185,141,88,.14);--area-border:rgba(185,141,88,.48)}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}
-body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;overflow:hidden;transition:background .65s ease,color .45s ease}
 #app{width:100vw;height:100vh;min-height:420px;display:grid;grid-template-columns:minmax(300px,42%) 1fr;gap:18px;padding:18px}
 .left,.right{min-width:0;min-height:0;border:1px solid var(--line);border-radius:18px;background:var(--panel);overflow:hidden}
 .left{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;position:relative;background:radial-gradient(ellipse at 50% 0%,var(--skin-glow),transparent 62%),var(--panel);border-color:var(--skin-edge);box-shadow:inset 0 0 0 1px var(--skin-glow)}
@@ -107,6 +107,12 @@ body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple S
   .highest-badge{font-size:9px;padding:1px 5px}
 }
 
+/* 구글시트 HEX 스킨 전환 효과 */
+.left,.right,.trade-card,.apt-name,.area-label,.apt-image-wrap{
+  transition:background .6s ease,border-color .6s ease,box-shadow .6s ease,color .45s ease;
+}
+.apt-name{box-shadow:0 10px 28px rgba(0,0,0,.28),inset 0 0 24px var(--skin-glow)}
+.area-label{box-shadow:0 0 0 3px var(--area-bg),0 8px 22px rgba(0,0,0,.25)}
 /* 단지·면적 전환 시 새 화면임을 분명하게 보여주는 모션 */
 .apt-name.group-change{animation:aptNameIn .75s cubic-bezier(.2,.8,.2,1) both}
 .area-label.group-change{animation:areaIn .65s cubic-bezier(.2,.8,.2,1) both}
@@ -218,8 +224,8 @@ function preloadUpcomingImages(){
 }
 
 function renderGroup(g){
-  // 현재 단지의 스킨을 body에 적용합니다. 최고가 박스는 별도 금색 스타일을 유지합니다.
-  document.body.dataset.skin=g.skin||"navy";
+  // 단지명meta의 전광판_스킨 HEX 값을 읽어 화면 전체 팔레트를 생성합니다.
+  applySkin(g.skin);
   document.getElementById("aptName").textContent=g.name;
   document.getElementById("rightTitle").innerHTML=`<span class="title-apt group-change">${esc(g.name)}</span><span class="title-caption">최근 아파트 실거래</span>`;
   const areaLabel=document.getElementById("areaLabel");
@@ -478,17 +484,53 @@ function intArea(v){const n=num(v);return n===null?null:Math.trunc(n)}
 function keyOf(apt,area){return String(apt).trim()+"||"+String(Math.trunc(Number(area)))}
 function maxNum(a,b){const n=num(b);return n===null?a:(a===null||n>a?n:a)}
 function maxText(a,b){const v=String(b??"").trim();return !v?a:( !a||v.localeCompare(String(a),"ko")>0?v:a)}
+/* 단지명meta의 전광판_스킨에서 HEX를 직접 읽고 색상 조합을 자동 생성 */
 function normalizeSkin(value){
-  const v=String(value||"").trim().toLowerCase().replace(/[\s_-]/g,"");
-  const aliases={
-    navy:"navy",네이비:"navy",네이비골드:"navy",navygold:"navy",
-    emerald:"emerald",green:"emerald",에메랄드:"emerald",에메랄드그린:"emerald",
-    charcoal:"charcoal",gray:"charcoal",grey:"charcoal",차콜:"charcoal",차콜실버:"charcoal",
-    burgundy:"burgundy",버건디:"burgundy",버건디골드:"burgundy",
-    teal:"teal",딥틸:"teal",틸블루:"teal",딥틸블루:"teal",
-    bronze:"bronze",브론즈:"bronze",브론즈브라운:"bronze",brown:"bronze"
+  const raw=String(value||"").trim();
+  const m=raw.match(/#([0-9a-fA-F]{6})/);
+  return {name:raw.replace(/\s*\(#[0-9a-fA-F]{6}\)\s*/,"").trim()||"기본 스킨",hex:m?"#"+m[1].toUpperCase():null};
+}
+function hexToRgb(hex){
+  const n=parseInt(String(hex).replace("#",""),16);
+  return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
+}
+function rgbToHsl(c){
+  let r=c.r/255,g=c.g/255,b=c.b/255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b),d=max-min;
+  let h=0,s=0,l=(max+min)/2;
+  if(d){s=d/(1-Math.abs(2*l-1));switch(max){case r:h=((g-b)/d)%6;break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h*=60;if(h<0)h+=360;}
+  return {h,s,l};
+}
+function hslToHex(h,s,l){
+  const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;
+  let r=0,g=0,b=0;
+  if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}
+  return "#"+[r,g,b].map(v=>Math.round((v+m)*255).toString(16).padStart(2,"0")).join("");
+}
+function applySkin(skin){
+  const hex=skin&&skin.hex?skin.hex:"#C9A85D";
+  const hsl=rgbToHsl(hexToRgb(hex)),h=hsl.h,rgb=hexToRgb(hex);
+  const edge=hslToHex(h,Math.max(.3,hsl.s*.75),Math.min(.8,Math.max(.48,hsl.l)));
+  const bg=hslToHex(h,Math.min(.5,Math.max(.2,hsl.s*.65)),.075);
+  const panel=hslToHex(h,Math.min(.45,Math.max(.16,hsl.s*.5)),.13);
+  const panel2=hslToHex(h,Math.min(.48,Math.max(.18,hsl.s*.58)),.20);
+  const imageBg=hslToHex(h,Math.min(.42,Math.max(.15,hsl.s*.5)),.16);
+  const soft=hslToHex(h,Math.min(.5,Math.max(.2,hsl.s*.58)),.28);
+  const v={
+    "--bg":bg,"--panel":panel,"--panel2":panel2,"--line":"rgba(220,230,240,.19)",
+    "--text":"#F5F7FA","--muted":"#B9C4CE","--accent":hex,
+    "--panel-gradient":`linear-gradient(145deg,${soft},${panel})`,"--image-bg":imageBg,
+    "--apt-shadow":`rgba(${rgb.r},${rgb.g},${rgb.b},.25)`,
+    "--card-border":`rgba(${rgb.r},${rgb.g},${rgb.b},.34)`,
+    "--title-color":hslToHex(h,Math.min(.58,hsl.s+.08),.84),"--title-border":edge,
+    "--area-color":"#FFFFFF","--area-bg":`rgba(${rgb.r},${rgb.g},${rgb.b},.18)`,
+    "--area-border":`rgba(${rgb.r},${rgb.g},${rgb.b},.7)`,
+    "--skin-glow":`rgba(${rgb.r},${rgb.g},${rgb.b},.34)`,"--skin-edge":edge,
+    "--skin-name-bg":`rgba(${rgb.r},${rgb.g},${rgb.b},.24)`
   };
-  return aliases[v]||"navy";
+  Object.entries(v).forEach(([k,val])=>document.body.style.setProperty(k,val));
+  document.body.dataset.skin="sheet";
+  document.body.dataset.skinName=skin&&skin.name?skin.name:"기본 스킨";
 }
 function cleanPart(v){const n=num(v);return n===null?"":String(Math.trunc(n))}
 function formatDate(y,m,d){return y&&m&&d?y.padStart(4,"0")+"."+m.padStart(2,"0")+"."+d.padStart(2,"0"):""}
@@ -532,7 +574,8 @@ function buildGroups(metaRows,outputRows){
 
     // 나머지 컬럼은 동일 단지·동일 면적 그룹 안에서 최대값을 적용합니다.
     g.imageFile=maxText(g.imageFile,row[mi.image]);
-    g.skin=maxText(g.skin,row[mi.skin]);
+    // 중복 행에서는 첫 번째로 입력된 유효 스킨값을 유지합니다.
+    if(!String(g.skin||"").trim() && String(row[mi.skin]||"").trim()) g.skin=String(row[mi.skin]).trim();
     g.rotateSeconds=maxNum(g.rotateSeconds,row[mi.rotate]);
   }
   const trades=new Map();
