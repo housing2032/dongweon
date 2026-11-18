@@ -328,7 +328,11 @@ function goToPreviousGroupBySwipe(){
   if(!boardGroups.length)return;
 
   if(showingWelcome){
-    // 고정 환영 화면에서는 위로 스와이프해도 화면을 유지합니다.
+    // 고정 환영 화면에서 이전 동작을 하면 마지막 단지로 이동합니다.
+    currentIndex=boardGroups.length-1;
+    hideWelcome();
+    renderGroup(boardGroups[currentIndex]);
+    setStatus(`${currentIndex+1} / ${boardGroups.length} 단지 · ${boardGroups[currentIndex].rotateSeconds}초 후 전환 (이전 단지)`);
     scheduleNextRotation();
     return;
   }
@@ -367,7 +371,7 @@ document.addEventListener("wheel",()=>{
 },{passive:true});
 
 // 모바일 스와이프 방향에 따라 단지를 이동합니다.
-// 왼쪽·위쪽 스와이프: 이전 단지 / 오른쪽·아래쪽 스와이프: 다음 단지
+// 위쪽·왼쪽·오른쪽 스와이프: 다음 단지 / 아래쪽 스와이프: 이전 단지
 let touchStartX=0;
 let touchStartY=0;
 let touchStartAt=0;
@@ -394,17 +398,15 @@ document.addEventListener("touchend",(event)=>{
   if(distance>=45 && elapsed<1200){
     suppressClickUntil=Date.now()+700;
 
-    // 이동 방향에 따라 단지를 전환합니다.
+    // 요청한 방향별 동작: 위·왼쪽·오른쪽은 다음 단지, 아래는 이전 단지
     if(absY>absX*1.2){
-      if(deltaY>0){
-        advanceGroupByUserInput(); // 아래로: 다음 단지
+      if(deltaY<0){
+        advanceGroupByUserInput(); // 위로: 다음 단지
       }else{
-        goToPreviousGroupBySwipe(); // 위로: 이전 단지 또는 첫 단지의 고정 이미지
+        goToPreviousGroupBySwipe(); // 아래로: 이전 단지
       }
-    }else if(deltaX<0){
-      goToPreviousGroupBySwipe(); // 왼쪽으로: 이전 단지
     }else{
-      advanceGroupByUserInput(); // 오른쪽으로: 다음 단지
+      advanceGroupByUserInput(); // 왼쪽·오른쪽: 다음 단지
     }
   }
 },{passive:true});
