@@ -314,6 +314,36 @@ body{background:var(--bg);color:var(--text);font-family:"Malgun Gothic","Apple S
   .area-label.group-change{animation:none !important}
 }
 
+/* ===== 전광판/PC 화면: 최고가 카드의 금액과 층·면적 겹침 방지 ===== */
+@media(min-width:761px){
+  .trade-card.highest{
+    padding:clamp(3px,.55vh,7px) clamp(6px,.8vw,14px);
+    gap:clamp(1px,.25vh,3px);
+  }
+  .trade-card.highest .highest-badge{
+    flex:0 0 auto;
+    font-size:clamp(9px,1.05vh,12px);
+    line-height:1.1;
+    padding:2px 7px;
+  }
+  .trade-card.highest .trade-date{
+    flex:0 0 auto;
+    font-size:clamp(10px,1.2vh,14px);
+    line-height:1.15;
+  }
+  .trade-card.highest .trade-price{
+    flex:0 0 auto;
+    font-size:clamp(18px,2.45vh,31px);
+    line-height:1.18;
+    padding-bottom:.08em;
+  }
+  .trade-card.highest .trade-meta{
+    flex:0 0 auto;
+    font-size:clamp(10px,1.15vh,14px);
+    line-height:1.15;
+  }
+}
+
 </style>
 </head>
 <body>
