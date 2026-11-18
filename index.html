@@ -484,12 +484,13 @@ function buildGroups(metaRows,outputRows){
   for(let r=1;r<metaRows.length;r++){
     const row=metaRows[r],apt=String(row[mi.apt]||"").trim(),visible=String(row[mi.visible]||"").trim();
     if(!visible||!apt)continue;
-    if(!meta.has(apt))meta.set(apt,{name:apt,area:null,imageFile:"",skin:"navy",rotateSeconds:DEFAULT_ROTATE_SECONDS});
-    const g=meta.get(apt);g.area=maxNum(g.area,row[mi.area]);g.imageFile=maxText(g.imageFile,row[mi.image]);
-    const skinValue=String(row[mi.skin]||"").trim();
-    if(skinValue)g.skin=normalizeSkin(skinValue);
-    const rotateValue=num(row[mi.rotate]);
-    if(rotateValue!==null&&rotateValue>0)g.rotateSeconds=rotateValue;
+    // '나의_단지명' 단일 컬럼으로만 그룹핑하고, 나머지 컬럼은 그룹 내 최대값을 사용합니다.
+    if(!meta.has(apt))meta.set(apt,{name:apt,area:null,imageFile:"",skin:"",rotateSeconds:null});
+    const g=meta.get(apt);
+    g.area=maxNum(g.area,row[mi.area]);
+    g.imageFile=maxText(g.imageFile,row[mi.image]);
+    g.skin=maxText(g.skin,row[mi.skin]);
+    g.rotateSeconds=maxNum(g.rotateSeconds,row[mi.rotate]);
   }
   const trades=new Map();
   for(let r=1;r<outputRows.length;r++){
@@ -501,7 +502,18 @@ function buildGroups(metaRows,outputRows){
     const k=keyOf(apt,area);if(!trades.has(k))trades.set(k,[]);trades.get(k).push(t);
   }
   const groups=[];
-  meta.forEach(g=>{const area=intArea(g.area);if(area===null)return;groups.push({name:g.name,area,imageFile:g.imageFile,skin:g.skin,rotateSeconds:g.rotateSeconds||DEFAULT_ROTATE_SECONDS,trades:(trades.get(keyOf(g.name,area))||[]).slice().sort((a,b)=>b.dateSort-a.dateSort)});});
+  meta.forEach(g=>{
+    const area=intArea(g.area);
+    if(area===null)return;
+    groups.push({
+      name:g.name,
+      area,
+      imageFile:g.imageFile,
+      skin:normalizeSkin(g.skin),
+      rotateSeconds:g.rotateSeconds!==null&&g.rotateSeconds>0?g.rotateSeconds:DEFAULT_ROTATE_SECONDS,
+      trades:(trades.get(keyOf(g.name,area))||[]).slice().sort((a,b)=>b.dateSort-a.dateSort)
+    });
+  });
   return groups;
 }
 async function loadBoard(){
