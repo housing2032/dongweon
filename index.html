@@ -571,7 +571,7 @@ function advanceGroupByUserInput(){
   scheduleNextRotation();
 }
 
-/* 모바일에서 위로 스와이프하면 이전 단지로 이동합니다. */
+/* 모바일에서 왼쪽 또는 아래쪽으로 스와이프하면 이전 단지로 이동합니다. */
 function goToPreviousGroupBySwipe(){
   if(!boardGroups.length)return;
 
@@ -619,7 +619,7 @@ document.addEventListener("wheel",()=>{
 },{passive:true});
 
 // 모바일 스와이프 방향에 따라 단지를 이동합니다.
-// 위쪽·왼쪽·오른쪽 스와이프: 다음 단지 / 아래쪽 스와이프: 이전 단지
+// 왼쪽·아래쪽 스와이프: 이전 단지 / 오른쪽·위쪽 스와이프: 다음 단지
 let touchStartX=0;
 let touchStartY=0;
 let touchStartAt=0;
@@ -646,7 +646,7 @@ document.addEventListener("touchend",(event)=>{
   if(distance>=45 && elapsed<1200){
     suppressClickUntil=Date.now()+700;
 
-    // 요청한 방향별 동작: 위·왼쪽·오른쪽은 다음 단지, 아래는 이전 단지
+    // 세로 스와이프와 가로 스와이프를 구분하여 단지를 이동합니다.
     if(absY>absX*1.2){
       if(deltaY<0){
         advanceGroupByUserInput(); // 위로: 다음 단지
@@ -654,7 +654,11 @@ document.addEventListener("touchend",(event)=>{
         goToPreviousGroupBySwipe(); // 아래로: 이전 단지
       }
     }else{
-      advanceGroupByUserInput(); // 왼쪽·오른쪽: 다음 단지
+      if(deltaX<0){
+        goToPreviousGroupBySwipe(); // 왼쪽: 이전 단지
+      }else{
+        advanceGroupByUserInput(); // 오른쪽: 다음 단지
+      }
     }
   }
 },{passive:true});
