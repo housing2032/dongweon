@@ -790,6 +790,35 @@ function buildGroups(metaRows,outputRows){
     floor:col(oh,"층","출력용")
   };
 
+  // 출력용 시트의 실거래 내역을 단지명 + 실제 전용면적 기준으로 먼저 정리합니다.
+  // 이후 meta의 공공_전용면적과 정확히 일치하는 거래만 각 전광판 그룹에 연결합니다.
+  const trades=new Map();
+  for(let r=1;r<outputRows.length;r++){
+    const row=outputRows[r];
+    const apt=String(row[oi.apt]||"").trim();
+    const area=exactArea(row[oi.area]);
+    if(!apt||area===null)continue;
+
+    const year=cleanPart(row[oi.year]);
+    const month=cleanPart(row[oi.month]);
+    const day=cleanPart(row[oi.day]);
+    const date=formatDate(year,month,day);
+    const dateSort=Number(year)*10000+Number(month)*100+Number(day);
+    const priceValue=num(row[oi.price]);
+    const trade={
+      date,
+      dateSort:Number.isFinite(dateSort)?dateSort:0,
+      price:formatPrice(row[oi.price],row[oi.price]),
+      priceValue,
+      floor:cleanPart(row[oi.floor]),
+      area:String(area)
+    };
+
+    const tradeKey=keyOf(apt,area);
+    if(!trades.has(tradeKey))trades.set(tradeKey,[]);
+    trades.get(tradeKey).push(trade);
+  }
+
   // 메타 행은 공공 전용면적으로 국토부 거래를 연결한 뒤,
   // 나의_단지명 + 전광판_표시면적(약식) 기준으로 하나의 화면 그룹으로 통합합니다.
   const metaGroups=new Map();
