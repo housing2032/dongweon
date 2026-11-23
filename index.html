@@ -695,7 +695,16 @@ function col(map,name,sheet){
 }
 function num(v){const n=Number(String(v??"").replace(/,/g,"").replace(/[^\d.-]/g,""));return Number.isFinite(n)?n:null}
 function intArea(v){const n=num(v);return n===null?null:Math.trunc(n)}
-function keyOf(apt,area){return String(apt).trim()+"||"+String(Math.trunc(Number(area)))}
+function exactArea(v){
+  const raw=String(v??"").trim();
+  if(!raw)return null;
+  const n=Number(raw.replace(/,/g,""));
+  return Number.isFinite(n)?n:null;
+}
+function keyOf(apt,area){
+  const n=exactArea(area);
+  return String(apt).trim()+"||"+(n===null?"":String(n));
+}
 function maxNum(a,b){const n=num(b);return n===null?a:(a===null||n>a?n:a)}
 function maxText(a,b){const v=String(b??"").trim();return !v?a:( !a||v.localeCompare(String(a),"ko")>0?v:a)}
 /* 단지명meta의 전광판_스킨에서 HEX를 직접 읽고 색상 조합을 자동 생성 */
@@ -762,56 +771,80 @@ async function fetchCSV(url,label){
 function buildGroups(metaRows,outputRows){
   if(metaRows.length<2||outputRows.length<2)return [];
   const mh=headerMap(metaRows[0]),oh=headerMap(outputRows[0]);
-  const mi={visible:col(mh,"전광판_표시여부","단지명meta"),apt:col(mh,"나의_단지명","단지명meta"),area:col(mh,"전광판_표시면적(약식)","단지명meta"),image:col(mh,"전광판_이미지파일명","단지명meta"),skin:col(mh,"전광판_스킨","단지명meta"),rotate:col(mh,"전광판_주기","단지명meta")};
-  const oi={apt:col(oh,"단지명","출력용"),area:col(oh,"전용면적","출력용"),year:col(oh,"계약년도","출력용"),month:col(oh,"계약월","출력용"),day:col(oh,"계약일","출력용"),price:col(oh,"거래금액(만원)","출력용"),floor:col(oh,"층","출력용")};
-  const meta=new Map();
+  const mi={
+    visible:col(mh,"전광판_표시여부","웹게시됨_전광판meta"),
+    apt:col(mh,"나의_단지명","웹게시됨_전광판meta"),
+    publicArea:col(mh,"공공_전용면적","웹게시됨_전광판meta"),
+    displayArea:col(mh,"전광판_표시면적(약식)","웹게시됨_전광판meta"),
+    image:col(mh,"전광판_이미지파일명","웹게시됨_전광판meta"),
+    skin:col(mh,"전광판_스킨","웹게시됨_전광판meta"),
+    rotate:col(mh,"전광판_주기","웹게시됨_전광판meta")
+  };
+  const oi={
+    apt:col(oh,"단지명","출력용"),
+    area:col(oh,"전용면적","출력용"),
+    year:col(oh,"계약년도","출력용"),
+    month:col(oh,"계약월","출력용"),
+    day:col(oh,"계약일","출력용"),
+    price:col(oh,"거래금액(만원)","출력용"),
+    floor:col(oh,"층","출력용")
+  };
+
+  // 메타 행은 그룹으로 합치지 않고, 표시 대상 행을 각각 독립된 화면 데이터로 만듭니다.
+  const meta=[];
   for(let r=1;r<metaRows.length;r++){
     const row=metaRows[r];
     const apt=String(row[mi.apt]||"").trim();
     const visible=String(row[mi.visible]||"").trim();
-    const area=intArea(row[mi.area]);
-    if(!visible||!apt||area===null)continue;
+    const publicArea=exactArea(row[mi.publicArea]);
+    const displayAreaValue=exactArea(row[mi.displayArea]);
+    const displayArea=displayAreaValue===null?null:Math.trunc(displayAreaValue);
+    if(!visible||!apt||publicArea===null||displayArea===null)continue;
 
-    // '나의_단지명'과 '전광판_표시면적(약식)' 조합으로 그룹핑합니다.
-    // 같은 단지라도 면적이 다르면 별도 전광판 화면으로 표시합니다.
-    const groupKey=keyOf(apt,area);
-    if(!meta.has(groupKey)){
-      meta.set(groupKey,{
-        name:apt,
-        area,
-        imageFile:"",
-        skin:"",
-        rotateSeconds:null
-      });
-    }
-    const g=meta.get(groupKey);
-
-    // 나머지 컬럼은 동일 단지·동일 면적 그룹 안에서 최대값을 적용합니다.
-    g.imageFile=maxText(g.imageFile,row[mi.image]);
-    g.skin=maxText(g.skin,row[mi.skin]);
-    g.rotateSeconds=maxNum(g.rotateSeconds,row[mi.rotate]);
+    meta.push({
+      name:apt,
+      publicArea,
+      area:displayArea,
+      imageFile:String(row[mi.image]||"").trim(),
+      skin:normalizeSkin(row[mi.skin]),
+      rotateSeconds:(num(row[mi.rotate])!==null&&num(row[mi.rotate])>0)
+        ?num(row[mi.rotate]):DEFAULT_ROTATE_SECONDS
+    });
   }
+
+  // 국토부 거래는 단지명과 소수점을 유지한 전용면적으로 찾아볼 수 있도록 인덱싱합니다.
   const trades=new Map();
   for(let r=1;r<outputRows.length;r++){
-    const row=outputRows[r],apt=String(row[oi.apt]||"").trim(),area=intArea(row[oi.area]);
+    const row=outputRows[r];
+    const apt=String(row[oi.apt]||"").trim();
+    const area=exactArea(row[oi.area]);
     if(!apt||area===null)continue;
     const y=cleanPart(row[oi.year]),m=cleanPart(row[oi.month]),d=cleanPart(row[oi.day]);
     const price=num(row[oi.price]);
-    const t={date:formatDate(y,m,d),dateSort:Number(y||0)*10000+Number(m||0)*100+Number(d||0),price:formatPrice(row[oi.price],row[oi.price]),priceValue:price,floor:String(row[oi.floor]||"").trim(),area};
-    const k=keyOf(apt,area);if(!trades.has(k))trades.set(k,[]);trades.get(k).push(t);
+    const t={
+      date:formatDate(y,m,d),
+      dateSort:Number(y||0)*10000+Number(m||0)*100+Number(d||0),
+      price:formatPrice(row[oi.price],row[oi.price]),
+      priceValue:price,
+      floor:String(row[oi.floor]||"").trim(),
+      area
+    };
+    const k=keyOf(apt,area);
+    if(!trades.has(k))trades.set(k,[]);
+    trades.get(k).push(t);
   }
-  const groups=[];
-  meta.forEach(g=>{
-    groups.push({
-      name:g.name,
-      area:g.area,
-      imageFile:g.imageFile,
-      skin:normalizeSkin(g.skin),
-      rotateSeconds:g.rotateSeconds!==null&&g.rotateSeconds>0?g.rotateSeconds:DEFAULT_ROTATE_SECONDS,
-      trades:(trades.get(keyOf(g.name,g.area))||[]).slice().sort((a,b)=>b.dateSort-a.dateSort)
-    });
-  });
-  return groups;
+
+  // 각 메타 행을 그대로 전광판 화면으로 만들고, 공공_전용면적과 일치하는 거래만 연결합니다.
+  return meta.map(g=>({
+    name:g.name,
+    area:g.area,
+    imageFile:g.imageFile,
+    skin:g.skin,
+    rotateSeconds:g.rotateSeconds,
+    trades:(trades.get(keyOf(g.name,g.publicArea))||[])
+      .slice()
+      .sort((a,b)=>b.dateSort-a.dateSort)
+  }));
 }
 async function loadBoard(){
   try{
