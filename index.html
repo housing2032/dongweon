@@ -536,9 +536,9 @@ function startRotation(){
   hideLoading();
   if(rotateTimer)clearTimeout(rotateTimer);
   if(!boardGroups.length){
-    document.getElementById("aptName").textContent="표시할 단지가 없습니다.";
-    document.getElementById("tradeList").innerHTML='<div class="empty">단지명meta 탭의 전광판_표시여부와 나의_단지명을 확인해 주세요.</div>';
-    setStatus("표시 대상 단지 없음");
+    document.getElementById("aptName").textContent="표시할 실거래 데이터가 없습니다.";
+    document.getElementById("tradeList").innerHTML='<div class="empty">현재 표시 대상으로 설정된 면적 중 실거래 내역이 있는 단지가 없습니다.</div>';
+    setStatus("표시할 실거래 데이터 없음");
     return;
   }
   hideWelcome();
@@ -883,7 +883,11 @@ async function loadBoard(){
   try{
     setStatus("구글시트 데이터 연결 중");
     const [metaRows,outputRows]=await Promise.all([fetchCSV(META_CSV_URL,"단지명meta"),fetchCSV(OUTPUT_CSV_URL,"출력용")]);
-    boardGroups=buildGroups(metaRows,outputRows);currentIndex=0;startRotation();
+    // 실거래 내역이 없는 면적은 전광판 순환 대상에서 제외합니다.
+    // 따라서 빈 화면이나 "해당 면적의 실거래 내역이 없습니다" 문구가 표시되지 않고,
+    // 거래가 존재하는 다음 단지로 바로 이어집니다.
+    boardGroups=buildGroups(metaRows,outputRows).filter(group=>group.trades && group.trades.length>0);
+    currentIndex=0;startRotation();
   }catch(err){showLoadError(err.message||String(err));}
 }
 loadBoard();
