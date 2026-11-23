@@ -788,8 +788,7 @@ function buildGroups(metaRows,outputRows){
 
     // 나머지 컬럼은 동일 단지·동일 면적 그룹 안에서 최대값을 적용합니다.
     g.imageFile=maxText(g.imageFile,row[mi.image]);
-    // 중복 행에서는 첫 번째로 입력된 유효 스킨값을 유지합니다.
-    if(!String(g.skin||"").trim() && String(row[mi.skin]||"").trim()) g.skin=String(row[mi.skin]).trim();
+    g.skin=maxText(g.skin,row[mi.skin]);
     g.rotateSeconds=maxNum(g.rotateSeconds,row[mi.rotate]);
   }
   const trades=new Map();
